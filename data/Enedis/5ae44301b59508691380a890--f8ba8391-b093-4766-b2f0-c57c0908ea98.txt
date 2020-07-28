@@ -1,0 +1,490 @@
+ 
+Page : 1/11 
+Enedis - Tour Enedis 
+34 place des Corolles 
+92079 Paris La Défense Cedex 
+enedis.fr  
+SA à directoire et à conseil de surveillance 
+Capital de 270 037 000 euros 
+R.C.S. de Nanterre 444 608 442 
+Enedis est certifié ISO 14001 pour l’environnement  
+ 
+Aide en ligne - Dictionnaire de données 
+Agrégats segmentés de consommation et de production 
+électrique au pas ½ h 
+ 
+Version : V3 
+Nb. de pages : 9 
+ 
+ 
+Version Date d’application Nature de la modification Annule et remplace 
+V0 27/04/2018 Initialisation   
+V1 17/05/2018 Correction d'une coquille dans le dictionnaire de données   
+V2 30/08/2018 Précision sur le classement des clients en Cdc  
+V3 30/04/2019 
+Correction d’une coquille et précision dans la présentation 
+générale 
+ 
+ 
+Annexe :  
+ 
+ 
+Résumé / Avertissement 
+Cette note est une aide en ligne et un dictionnaire de données à destination des utilisateurs du jeu de données "Agrégats 
+segmentés de consommation et production électrique au pas 1/2h". 
+ 
+ 
+ 
+ 
+  
+Programme Numérique / La Fabrique 
+ 
+ 
+ 
+Page : 2/11 
+V3 
+17/05/2018  
+ 
+SOMMAIRE 
+1. Présentation générale des jeux de données.................................................................................... 3 
+2. Dictionnaire des données disponibles ............................................................................................ 3 
+3. Mode de calcul des différents agrégats et clés de lecture ............................................................... 5 
+4. Règles de secrétisation et de publication ........................................................................................ 7 
+5. Regroupements de Profils et Plages de puissance appliqués ......................................................... 10 
+6. Annexes ....................................................................................................................................... 10 
+ 
+  
+ 
+ 
+ 
+Page : 3/11 
+V3 
+17/05/2018  
+ 
+1. Présentation générale des jeux de données 
+ 
+Les jeux de données présentent des agrégats de consommation et de production d’électricité des utilisateurs du réseau Enedis 
+au pas ½ h. Cette publication répond à une nouvelle obligation légale (L111-73-1) créée dans le cadre de la Loi Pour une 
+République Numérique. Le décret 2017-486 et son arrêté d’application paru le 29 décembre 2017 fixent les modalités 
+détaillées de mise en Open Data de données de consommation et production par les GRD et GRT, Electricité et Gaz. 
+ 
+Contenu des jeux de données 
+Les jeux de données contiennent 3 familles d’agrégats : 
+- Le nombre de points de soutirage / d’injection 
+- L’énergie totale soutirée / injectée  
+- Les courbes moyennes de consommation / production 
+ 
+Les profils types doivent également faire l’objet d’une publication selon le décret : ils sont déjà publiés sur l’Open Data 
+d’Enedis : https://data.enedis.fr/explore/dataset/coefficients-des-profils, et peuvent être visualisés sur cette page : 
+http://www.enedis.fr/coefficients-des-profils. 
+ 
+La publication se fait au travers de trois jeux de données principaux contenant les croisements attendus pour les différents 
+segments d’utilisateurs du réseau Enedis : 
+- Consommateurs <= 36 kVA  Agrégats publiés par Profil et Plage de puissance souscrite 
+- Consommateurs > 36 kVA  Agrégats publiés par Profil, Plage de puissance souscrite et Secteur d’activité 
+- Producteurs  Agrégats publiés par Filière de production et Plage de puissance d’injection 
+ 
+ 
+Trois jeux de données annexes sont également publiés. Ils contiennent le nombre de points de soutirage et d’injection sans 
+traitement liés au secret statistique (cf partie 5.) 
+- Consommateurs <= 36 kVA : https://data.enedis.fr/explore/dataset/nb-clients-inf-36/ 
+- Consommateurs > 36 kVA : https://data.enedis.fr/explore/dataset/nb-clients-sup-36/ 
+- Producteurs : https://data.enedis.fr/explore/dataset/nb-clients-prod/ 
+ 
+ 
+Périmètre Géographique 
+En 2018, le périmètre géographique est national. Les agrégats sont calculés en prenant en compte toutes les données du 
+périmètre Enedis. A partir de 2019, les agrégats seront également fournis à la maille régionale (12 régions administratives 
+métropolitaines). 
+ 
+Autres axes d’analyses 
+Les axes d’analyses principaux sont les croisements listés ci-dessus : Profil, Plage de puissance, Secteur d’activité, Filière de 
+production. A partir de 2020, les agrégats de consommation seront également produits par Code NAF et Option tarifaire du 
+tarif d’acheminement. 
+ 
+Fréquence de publication 
+Les agrégats sont publiés trimestriellement, au plus tard 31 jours après la fin du trimestre. 
+ 
+2. Dictionnaire des données disponibles  
+ 
+Voici la description détaillée du contenu de chaque jeu de données. Pour en savoir plus sur les règles de calcul des agrégats, se 
+rapporter à la section 3 de ce document. 
+ 
+Jeux de données consommation (<= 36 kVA et > 36 kVA)  
+ 
+Nom de la colonne Format Contenu 
+Horodate Date-Heure Date-Heure au pas ½ h 
+Profil Texte Profil type au sens de la Recoflux 
+ 
+ 
+ 
+Page : 4/11 
+V3 
+17/05/2018  
+ 
+Plage de puissance 
+souscrite 
+Texte Il s’agit de la puissance électrique souscrite par l’utilisateur dans son contrat de 
+fourniture. Elle représente la quantité maximale de soutirage possible. Dans ces 
+jeux de données, les différentes puissances sont regroupées dans des plages de 
+puissances. 
+Secteur activité Texte Cette colonne est disponible uniquement pour le jeu de données des 
+consommateurs > 36 kVA. 
+Le secteur d’activité du client est obtenu à partir du code NAF. 
+Nb points soutirage Numérique Le nombre de points de soutirage correspond au nombre de sites avec un 
+contrat actif sur le réseau Enedis. Il est identique pour toutes les ½ h d’une 
+même journée.  
+Total énergie soutirée (Wh) Numérique L’énergie totale soutirée correspond au volume d’électricité consommée sur la 
+½ h donnée par l’ensemble des sites du profil et de la plage de puissance 
+considérée 
+Courbe Moyenne n°1 (Wh) Numérique La Courbe Moyenne 1 correspond à la moyenne des volumes d’électricité 
+consommés sur la ½ h donnée par des sites équipés de compteurs 
+communicants et faisant partie du groupe dont le ratio (Conso 8h-20h)/(Conso 
+totale) est le plus élevé 
+Indice représentativité 
+Courbe n° 1 (%) 
+Pourcentage Il s’agit du ratio entre le nombre de points sur la Courbe Moyenne 1 et le 
+nombre de points total de la même catégorie de client (même profil, même 
+plage de puissance souscrite et même secteur d’activité) 
+Courbe Moyenne n°2 (Wh) Numérique La Courbe Moyenne 2 correspond à la moyenne des volumes d’électricité 
+consommés sur la ½ h, donnée par des sites équipés de compteurs 
+communicants et faisant partie du groupe dont le ratio (Conso 8h-20h)/(Conso 
+totale) est le plus bas 
+Indice représentativité 
+Courbe n° 2 (%) 
+Pourcentage Il s’agit du ratio entre le nombre de points sur lesquels la Courbe Moyenne 2 a 
+été calculée et le nombre de points total de la même catégorie de client (même 
+profil, même plage de puissance souscrite et même secteur) 
+Courbe Moyenne n°1 + n°2 
+(Wh) 
+Numérique La Courbe Moyenne n°1 + n°2 correspond à la moyenne des volumes 
+d’électricité consommés sur la ½ h donnée par tous les sites équipés de 
+compteurs communicants pris en compte dans les courbes 1 et 2 
+Indice représentativité 
+Courbe n° 1 + n° 2 (%) 
+Pourcentage Il s’agit du ratio entre le nombre de points sur lesquels a été basé le calcul de la 
+Courbe Moyenne n°1 + n°2 et le nombre de points total de la même catégorie 
+de client (même profil, même plage de puissance souscrite, même secteur 
+d’activité) 
+Jour Max du mois (0/1) Booléen Il s’agit d’un indicateur qui indique si la ½ h considérée fait partie du jour qui a 
+vu le pic de consommation d’énergie du mois, en France métropolitaine  
+Semaine Max du mois (0/1) Booléen Il s’agit d’un indicateur qui indique si la ½ h considérée fait partie de la semaine 
+qui contient le jour max du mois  
+ 
+Jeu de données production  
+ 
+Nom de la colonne Format Contenu 
+Horodate Date-Heure Date-Heure au pas 1/2h 
+Plage de puissance injection Texte Il s’agit de la puissance électrique souscrite par l’utilisateur dans son contrat 
+d’injection. Elle représente la quantité maximale d’injection possible. Dans ces 
+jeux de données, les différentes puissances sont regroupées dans des plages de 
+puissance.  
+Filière de production Texte Il s’agit des filières technologiques d’installations de production d’électricité 
+définies dans le 3° de l’article D. 142-9-2 du code de l’énergie 
+Nb points injection Numérique Le nombre de points d’injection correspond au nombre de sites avec un contrat 
+actif sur le réseau Enedis. Il est identique pour toutes les ½ h d’une même 
+journée.  
+Total énergie injectée (Wh) Numérique L’énergie totale injectée correspond au volume d’électricité injecté sur la ½ h 
+donnée par l’ensemble des sites de la filière de production et de la plage de 
+ 
+ 
+ 
+Page : 5/11 
+V3 
+17/05/2018  
+ 
+puissance considérée 
+Courbe Moyenne n°1 (Wh) Numérique La Courbe Moyenne 1 correspond à la moyenne des volumes d’électricité 
+injectés sur la ½ h donnée par des sites équipés de compteurs communicants et 
+faisant partie du groupe dont le ratio (Ecart-type)/(Moyenne) est le plus élevé 
+Indice représentativité 
+Courbe n° 1 (%) 
+Pourcentage Il s’agit du ratio entre le nombre de points sur lesquels la Courbe Moyenne 1 a 
+été calculée et le nombre de points total de la même catégorie de client (même 
+filière et même puissance d’injection) 
+Courbe Moyenne n°2 (Wh) Numérique La Courbe Moyenne 2 correspond à la moyenne des volumes d’électricité 
+injectés sur la ½ h donnée par des sites équipés de compteurs communicants et 
+faisant partie du groupe dont le ratio (Ecart-type)/(Moyenne) est le plus bas 
+Indice représentativité 
+Courbe n° 2 (%) 
+Pourcentage Il s’agit du ratio entre le nombre de points sur lesquels la Courbe Moyenne 2 a 
+été calculée et le nombre de points total de la même catégorie de client (même 
+filière et même puissance d’injection) 
+Courbe Moyenne n°1 + n°2 
+(Wh) 
+Numérique La Courbe Moyenne n°1 + n°2 correspond à la moyenne des volumes 
+d’électricité injectés sur la ½ h donnée par tous les sites équipés de compteurs 
+communicants pris en compte dans les courbes 1 et 2 
+Indice représentativité 
+Courbe n° 1 + n° 2 (%) 
+Pourcentage Il s’agit du ratio entre le nombre de points sur lesquels a été basé le calcul de la 
+Courbe Moyenne n°1 + n°2 et le nombre de points total de la même catégorie 
+de client (même filière et même puissance d’injection) 
+Jour Max du mois (0/1) Booléen Il s’agit d’un indicateur qui indique si la ½ h considérée fait partie du jour qui a 
+vu le pic de production d’énergie du mois, en France métropolitaine  
+Semaine Max du mois (0/1) Booléen Il s’agit d’un indicateur qui indique si la ½ h considérée fait partie de la semaine 
+qui contient le jour max du mois  
+ 
+Remarques : 
+ 
+Lorsque pour une catégorie donnée (profil, plage de puissance, secteur d’activité, etc.), il n’y a pas de point de soutirage ou 
+d’injection, la cellule du tableau indique 0. De même en cas de consommation ou de production nulle. 
+ 
+Lorsque pour une catégorie donnée (profil, plage de puissance, secteur, etc.), les informations sont confidentielles, la cellule 
+du tableau est vide.  
+Se reporter à la section « Règles de secrétisation » de ce document pour en savoir plus sur la notion de confidentialité. 
+ 
+ 
+3. Mode de calcul des différents agrégats et clés de lecture 
+ 
+Energie totale soutirée / injectée 
+ 
+Le calcul des énergies soutirées et injectées s’effectue de la même façon que pour les bilans électriques construits dans le 
+cadre de la Reconstitution des flux pour le processus RecoTemp, décrite dans les règles du dispositif de Responsable 
+d’Equilibre. Il s’effectue pour les clients profilés en trois étapes : 
+ 
+1. Les facteurs d’usages de chaque client déjà calculés pour les bilans RecoTemp sont utilisés. Il s’agit de la puissance 
+biannuelle ou mensuelle calculée pour chaque poste horosaisonnier à l’aide des valeurs d’énergies mesurées entre 
+deux relèves. 
+2. On applique ensuite, au facteur d’usage, le profil ajusté à la température de la période (méthode appelée « au 
+prorata profilis »). Cette énergie « modélisée » permet ainsi d’obtenir la consommation du client au pas ½ h. 
+3. Lorsque le facteur d’usage le plus récent ne couvre pas la fin de la période de calcul (trimestre), la dernière valeur 
+connue est utilisée et prolongée jusqu’à la fin du trimestre. 
+ 
+Pour les clients traités en courbe de charge dans la Reconstitution des flux, l’énergie au pas ½ h correspond à la courbe de 
+charge relevée.  
+ 
+ 
+ 
+ 
+Page : 6/11 
+V3 
+17/05/2018  
+ 
+Pour obtenir l’Energie totale soutirée ou injectée, l’intégralité des utilisateurs du réseau Enedis avec une situation 
+contractuelle active est prise en compte.   
+ 
+ 
+ 
+Page : 7/11 
+V3 
+17/05/2018  
+ 
+Nombre de points de soutirage/injection 
+ 
+Le nombre de points de soutirage et d’injection correspond au nombre de points pris en compte dans le calcul de l’énergie 
+totale. Il s’agit du nombre d’utilisateurs du réseau Enedis avec une situation contractuelle active. C’est donc l’énergie soutirée 
+ou injectée par ces points qui est sommée pour obtenir l’Energie totale. 
+Le nombre de points de soutirage et d’injection est identique pour toutes les ½ h d’une même journée.  
+ 
+Courbes de charge moyennes 
+ 
+Pour chaque maille de publication (profil, plage de puissance, secteur d’activité, etc.), trois courbes de charge moyennes de 
+clients télé relevés sont fournies. L’objectif étant de représenter des comportements hétérogènes au sein d’une même 
+catégorie de clients.  
+ 
+Les critères différenciants choisis sont :  
+- Pour la consommation : le ratio « Peak / Off-Peak ». Il s’agit du ratio entre la somme des consommations entre 8h et 
+20h les jours ouvrés - période électrique dite « peak » -  et la somme des consommations totales sur la période 
+- Pour la production : le coefficient de variation. Il s’agit du ratio entre l’écart-type et la moyenne sur la période 
+considérée 
+ 
+La valeur du ratio de chaque client est calculée sur l’intégralité du trimestre. Il permet ensuite de classer les clients en deux 
+catégories : 
+- La Courbe Moyenne 1 agrège l’énergie des 50% des clients avec le ratio le plus faible 
+- La Courbe Moyenne 2 agrège l’énergie des 50% des clients avec le ratio le plus élevé 
+- La Courbe moyenne n°1 et n°2 agrège l’énergie de l’ensemble des points (100% des clients de la maille) 
+ 
+Ainsi un client peut être classé différemment d’un trimestre à l’autre. 
+ 
+4. Règles de secrétisation et de publication 
+ 
+Client avec une puissance d’injection ou de soutirage <= 36 kVA : Application des règles de protection des Données à Caractère 
+Personnel (DCP)  
+ 
+Les données du segment <= 36 kVA sont protégées de façon à préserver la confidentialité des Données à Caractère Personnel. 
+Des règles strictes fixées par les textes réglementaires ont été appliquées. Ces règles sont basées sur un nombre minimal de 
+points à prendre en compte dans les agrégats pour ne pas révéler de comportements individuels.  
+Le critère du nombre de points varie selon la longueur de la période et la finesse du pas de temps de l’agrégat : plus la période 
+est longue et plus le pas de temps est fin, plus le critère du nombre de points à agréger augmente. 
+ 
+ Pour les agrégats « Energie totale », qui sont toujours publiés sur un trimestre et au pas ½ h, les règles sont : 
+- 100 points pour publier un agrégat constitué uniquement de clients profilés 
+- 5 000 points pour publier un agrégat constitué uniquement de clients traités en courbe de charge 
+- 100 points de courbe de charge dans un total de 5 000 points dans le cas d’un mélange de clients profilés et traités 
+en courbe de charge 
+- 100 points pour publier l’agrégat au pas jour 
+Ces critères de nombre de points à respecter sont divisés par 10 pour la production. 
+Ainsi, selon les types de données contenus dans l’agrégat (profilage ou courbe de charge), l’agrégat « Energie totale » est 
+publié, agrégé au pas jour, ou masqué. 
+ 
+ Pour les agrégats « Courbe moyenne », qui sont publiés sur une période et un pas de temps de variable, les règles sont : 
+- 5 000 points pour publier l’agrégat au pas ½ h sur un trimestre 
+- 500 points pour publier l’agrégat au pas ½ h sur une semaine 
+- 100 points pour publier l’agrégat au pas ½ h sur une journée  
+- 100 points pour publier l’agrégat au pas jour (moyenne des consommations sur la journée), quelle que soit la période 
+Ces critères de nombre de points à respecter sont divisés par 10 pour la production. 
+ 
+ 
+ 
+Page : 8/11 
+V3 
+17/05/2018  
+ 
+ 
+Ainsi, selon le nombre de points, l’agrégat « Courbe moyenne » est publié, agrégé au pas jour ou masqué, tel que :  
+- Si l’agrégat ne contient pas 5 000 points mais qu’il en contient 500 : les semaines qui contiennent les pics de 
+consommation mensuels sont publiés au pas ½ h et le reste de la période est publié au pas jour 
+- Si l’agrégat ne contient pas 500 points, mais qu’il en contient 100 : les jours qui contiennent les pics de consommation 
+mensuels sont publiés au pas ½ h et le reste de la période est publié au pas jour 
+- Si l’agrégat ne contient pas 100 points, il n’est pas publié 
+ 
+L’horodate des jeux de données est au pas ½ h, les valeurs au pas jour sont donc dupliquées sur les 48 ½ h de la journée. Ce qui 
+a pour conséquence des représentations en « escalier » pour certains agrégats, visibles sur la datavisualisation du jeu de 
+données sur le site institutionnel Enedis (http://data.enedis.fr)  
+Voici un exemple de l’impact que ces règles ont sur les « Courbes moyennes » publiées : 
+ 
+ 
+Sur cette représentation des courbes de consommations moyennes de PRO3 télé relevés, toutes plages de puissance 
+confondues, la semaine du 08/01/2018 au 16/01/2018 est publiée au pas ½ h, tandis que le reste de la période est agrégée au 
+pas jour.  
+Ce qui signifie que cette maille ne contient pas 5000 points pour publier toute la période au pas ½ h, mais qu’elle contient au 
+moins 500 points pour publier une semaine au pas ½ h. Le reste de la période donne une information au pas jour. 
+ 
+Client avec une puissance d’injection ou de soutirage > 36 kVA : Application du secret des affaires 
+  
+Les données des clients > 36 kVA sont protégées de façon à préserver le secret des affaires. Pour une maille donnée (profil, 
+puissance souscrite, filière, etc.), les données ne sont affichées que si l’agrégat contient 3 sites ou plus et si aucun des sites ne 
+représentent plus de 85% du total de l’agrégat. 
+ 
+ 
+ 
+ 
+ 
+Page : 9/11 
+V3 
+17/05/2018  
+ 
+  
+ 
+ 
+ 
+Page : 10/11 
+V3 
+17/05/2018  
+ 
+5. Regroupements de Profils et Plages de puissance appliqués 
+ 
+Certains croisements de profils et plages de puissances présentent peu de clients actifs. Afin de limiter le nombre de données 
+masquées en application des règles de confidentialité, des regroupements de profils et de plages de puissances ont été 
+effectués. Ils sont listés ici : 
+ 
+Regroupements de profils : 
+- RES1WE groupé avec RES1 
+- RES5 groupé avec RES2 
+- PRO1WE groupé avec PRO1 
+- PRO2WE et PRO6 groupés avec PRO2 
+- ENT2 groupé avec ENT1 
+- ENT4, ENT5 et ENT7 groupés avec ENT3 
+ 
+Regroupements de puissances : 
+- Pour les PRO2, RES2 et RES2WE,  regroupements des puissances de 0 à 6 kVA (inclus) 
+- Pour les PRO3, RES11, RES3 et RES4, regroupements des puissances de 0 à 9 kVA (inclus) 
+- Pour les PRO4, regroupement des puissances de 0 à 12 kVA (inclus) 
+- Pour les PRO3 et RES3, regroupement des puissances de 18 (exclu) à 30 kVA (inclus) 
+- Pour les PRO4 et RES4, regroupement des puissances de 18 (exclu) à 36 kVA (inclus) 
+- Pour les RES2WE, regroupement des puissances de 15 (exclu) à 36 kVA (inclus) 
+ 
+La datavisualisation permet de visualiser les données et de réaliser des opérations de tri / filtre. Le contenu de la liste 
+déroulante « Puissance souscrite » s’adapte en fonction du profil choisi. 
+ 
+A noter, que pour les agrégats « Nombre de points de soutirage » et « Nombre de points d’injection », aucune règle de secret 
+statistique n’est  à appliquer. 
+Il est donc possible de publier le détail des croisements sans regroupement de profil et plage de puissance. Cela a donné lieu à 
+la production de 3 jeux de données annexes contenant uniquement le nombre de points de soutirage/injection. Ils sont 
+disponibles sur la plate-forme Open Data d’Enedis (data.enedis.fr) ici : 
+ 
+- Consommateurs <= 36 kVA : https://data.enedis.fr/explore/dataset/nb-clients-inf-36/ 
+- Consommateurs > 36 kVA : https://data.enedis.fr/explore/dataset/nb-clients-sup-36/ 
+- Producteurs : https://data.enedis.fr/explore/dataset/nb-clients-prod/ 
+ 
+ 
+6. Annexes 
+ 
+Annexe 1 – Glossaire 
+ 
+Agrégat : grandeur synthétique généralement représentatif d'une somme ou d’une moyenne. 
+ 
+Activité de reconstitution des flux (RecoFlux) : Enedis et tous les autres Gestionnaire de Réseau de Distribution (GRD) se 
+doivent de transmettre chaque semaine à RTE, le bilan des consommations et des productions au pas ½ h sur leur réseau par 
+Responsable d’Equilibre (RE). L’information n’est que rarement disponible au pas de temps ½ h (index mensuels ou 
+semestriels), le GRD doit donc reconstituer les flux du réseau. Le principe de profilage permet d’estimer, à partir d’index, et de 
+profils types de clients, la consommation ou la production au pas ½ h.   
+ 
+Profil : Un profil reflète une forme de consommation ou de production, c'est-à-dire la façon dont un client moyen consomme 
+ou produit l'électricité ½ h par ½ h. Enedis construit des profils nationaux en vue d'établir les bilans réglementaires d'énergie 
+par RE (activité de reconstitution des flux). 
+ 
+Secteur d’activité : Les secteurs agriculture, tertiaire, industrie sont déduits des codes NAF des points de consommation > 36 
+kVA. La correspondance entre code NAF et secteur d’activité est présentée en annexe. 
+ 
+ 
+ 
+Page : 11/11 
+V3 
+17/05/2018  
+ 
+ 
+Annexe 2 – Table de correspondance entre les codes NAF niveau 2 et les secteurs d’activités 
+ 
+ 
+NAF rév. 2, 2008 (édition 2015)
+Secteur d'activité au sens du 
+décret du 28 juillet 2016
+NAF rév. 2, 2008 (édition 2015)
+Secteur d'activité au sens du 
+décret du 28 juillet 2016
+01 Agriculture 50 Tertiaire
+02 Agriculture 51 Tertiaire
+03 Agriculture 52 Tertiaire
+05 Industrie 53 Tertiaire
+06 Industrie 55 Tertiaire
+07 Industrie 56 Tertiaire
+08 Industrie 58 Tertiaire
+09 Industrie 59 Tertiaire
+10 Industrie 60 Tertiaire
+11 Industrie 61 Tertiaire
+12 Industrie 62 Tertiaire
+13 Industrie 63 Tertiaire
+14 Industrie 64 Tertiaire
+15 Industrie 65 Tertiaire
+16 Industrie 66 Tertiaire
+17 Industrie 68 Tertiaire
+18 Industrie 69 Tertiaire
+19 Industrie 70 Tertiaire
+20 Industrie 71 Tertiaire
+21 Industrie 72 Tertiaire
+22 Industrie 73 Tertiaire
+23 Industrie 74 Tertiaire
+24 Industrie 75 Tertiaire
+25 Industrie 77 Tertiaire
+26 Industrie 78 Tertiaire
+27 Industrie 79 Tertiaire
+28 Industrie 80 Tertiaire
+29 Industrie 81 Tertiaire
+30 Industrie 82 Tertiaire
+31 Industrie 84 Tertiaire
+32 Industrie 85 Tertiaire
+33 Industrie 86 Tertiaire
+35 Industrie 87 Tertiaire
+36 Tertiaire 88 Tertiaire
+37 Tertiaire 90 Tertiaire
+38 Tertiaire 91 Tertiaire
+39 Tertiaire 92 Tertiaire
+41 Industrie 93 Tertiaire
+42 Industrie 94 Tertiaire
+43 Industrie 95 Tertiaire
+45 Tertiaire 96 Tertiaire
+46 Tertiaire 97 Tertiaire
+47 Tertiaire 98 Tertiaire
+49 Tertiaire 99 Tertiaire

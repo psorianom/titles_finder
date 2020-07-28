@@ -1,0 +1,645 @@
+ 
+ 
+ 
+ 
+CONSOMMATIONS AGREGEES DE GAZ NATUREL ET 
+D’ELECTRICITE FOURNIES PAR LES GRD AUX PERSONNES 
+PUBLIQUES 
+ 
+ESTIMATION DES DONNEES DE 
+THERMOSENSIBILITE ET DE PART 
+THERMOSENSIBLE  
+ DATE : 20/07/2018 
+ ETAT : DOCUMENT FINAL 
+ 
+ 
+ 
+Cette note décrit la méthodologie détaillée employée pour l'élaboration des données 
+annuelles de thermosensibilité et part thermosensible à la maille IRIS associées aux PDL 
+résidentiels ou petit professionnels. 
+ 
+  
+                                                    Estimation des données de thermosensibilité et part thermosensible 
+ 
+ 
+ 
+ 
+Sommaire 
+Contexte .........................................................................................................................3 
+1 Description de la méthodologie ............................................................................4 
+2 Données utilisées ....................................................................................................6 
+2.1 Données de consommation ............................................................................................ 6 
+2.2 Données de température ................................................................................................ 6 
+3 Calcul des gradients de thermosensibilité à la maille PDL .................................7 
+3.1 PDL relevés semestriellement (gaz et électricité) ...................................................... 7 
+3.2 PDL relevés mensuellement (gaz et électricité) ......................................................... 8 
+3.3 PDL relevés quotidiennement (électricité et gaz) ................................................... 10 
+3.4 Sites disposant de courbes de charge (uniquement pour l’électricité) ............. 11 
+3.5 Cas des sites pour lesquels on ne dispose pas d’un historique suffisant ......... 11 
+4 Données publiées................................................................................................. 12 
+5 Interprétation des données ................................................................................ 14 
+Annexes ....................................................................................................................... 15 
+Annexe 1 : Estimateur des moindres carrés ...................................................................... 15 
+Annexe 2 : Températures seuils locales par station météo............................................ 16 
+ 
+  
+                                                    Estimation des données de thermosensibilité et part thermosensible 
+ 
+Contexte  
+ 
+ 
+Conformément à l’article D. 111-53 du code de l’énergie introduit par le décret n°2016-973 
+du 18 juillet 2016, les GRD doivent transmettre au Service de la donnée et des études 
+statistiques (SDES) au 30 juin de chaque année les consommations annuelles agrégées à 
+maille Ilot Regroupé pour l’Information Statistique (IRIS) et ventilées par secteur d’activité. 
+Le décret permet également aux GRD de publier ces données en open data. Ces données 
+sont calculées à partir de consommations mesurées. La première transmission a été faite par 
+Enedis et GRDF au SDES en 2016. 
+ 
+Par ailleurs, il a également été prévu la transmission de données de thermosensibilité par 
+les GRD au SDES (avec possibilité de publication en open data). Cette thermosensibilité des 
+consommations annuelles est estimée à l’aide de deux données : gradient de 
+thermosensibilité et part de consommation thermosensible. Ces données peuvent 
+également être demandées par des personnes publiques.  
+La thermosensibilité représente la variation de la consommation engendrée par une 
+variation de la température, en deçà d’un certain seuil de température. Elle vise ainsi à 
+évaluer l’influence de la température sur la consommation d’énergie. Par exemple, une 
+baisse de température d’un degré fait augmenter la consommation de 10 kWh. Ceci 
+correspond alors à une thermosensibilité de 10 kWh/degré-jour. 
+La part thermosensible, quant à elle, représente le pourcentage de consommation sensible 
+aux variations de température. La plupart des consommations en effet, peuvent se diviser 
+en une part indépendante de la température – non thermosensible – et une part qui 
+dépend de la température – thermosensible.  
+Les premières estimations sont faites, pour un grand nombre de PDL, sur la base d’index 
+semestriels. Avec le déploiement des compteurs communicants, cette part thermosensible 
+pourra être estimée de façon plus fine. Les résultats gagneront donc en précision avec le 
+déploiement de compteurs communicants (Linky et Gazpar). 
+ 
+La thermosensibilité et la part thermosensible ne sont calculées que sur le segment 
+Résidentiel au sens de l’article D. 111-53 du code de l’énergie, c’est-à-dire les PDL dont la 
+puissance est inférieure à 36 kVA en électricité et dont la consommation est inférieure à 300 
+MWh en gaz. 
+  
+                                                    Estimation des données de thermosensibilité et part thermosensible 
+ 
+ 
+ 
+1 Description de la méthodologie 
+La thermosensibilité n’est pas mesurable directement. Une méthodologie a donc été 
+développée afin de l’estimer. Cette dernière se fonde sur l’observation empirique de 
+consommations et de températures. La présente note définit la méthodologie de manière 
+globale puis en détaille l’application en fonction de la quantité et de la granularité des 
+données de mesures individuelles disponibles.  
+ 
+L’observation des données de consommation et de température met en évidence qu’il 
+existe une relation quasi linéaire entre la consommation et la température en dessous d’un 
+certain seuil de température. Le graphique ci-dessous présente la puissance appelée 
+journalière moyenne aux bornes du réseau Enedis (en W) en fonction de la température 
+France lissée journalière moyenne.  
+ 
+ 
+Graphe 1 : Puissance appelée en fonction de la température : exemple pour l’electricité  
+ 
+ 
+On peut constater qu’au niveau français, en dessous d’une température journalière 
+moyenne d’environ 15 °C, la puissance électrique augmente de manière quasi linéaire. La 
+présence d’un gradient de thermosensibilité peut ainsi être mise en évidence. On cherche 
+                                                    Estimation des données de thermosensibilité et part thermosensible 
+ 
+donc à estimer ce gradient de thermosensibilité qui représente le lien existant entre 
+consommation et température en deçà de la température seuil.  
+ 
+Plus précisément, afin de s’affranchir de biais liés à des variations saisonnières ou 
+hebdomadaires de la consommation, on retiendra une méthodologie d’estimation appelée 
+« estimation des gradients par delta » qui consiste à expliquer une variation de 
+consommation par une variation de température. Ainsi, on estime la relation linéaire 
+suivante à l’aide de la méthode des moindres carrés : 
+ 
+ 
+∆ = 	
+ ∗ ∆ 
+ 
+Avec pour l’électricité : 
+ 
+éé : la température réalisée lissée moyennée (en °C) sur la journée  
+« électrique » (mesurée de 00h00 à 23h59) 
+ 
+ DJU =  	−		éé 										 > 		éé										0																																						 ≤		éé 	!	  exprimé en degré-jour (°C) 
+  
+∆: delta de DJU (calculé différemment en fonction du rythme de relevé) 
+ ∆ ∶ delta de consommation en kWh (calculé différemment en fonction du 
+rythme de relevé) 
+ 
+Et pour le gaz : 
+ 
+é : la température réelle (en °C) sur la journée « gazière » (moyenne des 
+températures mesurées entre 6h00 et 5h59) 
+DJU =   	− 		é 											 >		é				0																																							 ≤		é 				! exprimé en degrés-jours (°C) 
+ ∆: delta de DJU (calculé différemment en fonction du rythme de relevé) 
+∆ ∶ delta de consommation en kWh (calculé différemment en fonction du 
+rythme de relevé) 
+ 
+Le gradient obtenu à l’issue de la régression est exprimé en kWh/degré-jour.  
+  
+                                                    Estimation des données de thermosensibilité et part thermosensible 
+ 
+2 Données utilisées 
+ 
+Afin d’estimer la thermosensibilité des IRIS, on étudie la relation existant entre 
+consommation et température à cette même maille. Pour ce faire, deux types de données, 
+présentées ci-dessous, sont utilisés. 
+ 
+ 
+2.1 Données de consommation 
+Les données de consommation utilisées dans les régressions sont des consommations 
+journalières. Toutefois, elles peuvent être obtenues de trois manières différentes, en 
+fonction du rythme de relevé des PDL : consommations journalières moyennes calculées à 
+partir de consommations semestrielles, consommations journalières moyennes calculées à 
+partir de consommations mensuelles ou consommations quotidiennes pour les clients 
+relevés tous les jours (uniquement pour l’électricité). Ces consommations sont calculées à 
+partir des index de consommation dont on dispose (index semestriels, mensuels ou 
+quotidiens) pour chaque PDL et sont exprimées en kWh. Pour les PDL relevés 
+semestriellement ou mensuellement, l’ensemble de l’historique disponible est utilisé. Ainsi,  
+les relevés les plus anciens utilisés datent de 2004 pour l’électricité et de 2010 pour le gaz.  
+ 
+2.2 Données de température 
+Afin de garantir une estimation des données de thermosensibilité la plus précise possible, 
+on utilise les données de températures locales des stations météo de Météo France, qui 
+font référence pour l’électricité et pour le gaz. Une station météo est rattachée à chaque 
+IRIS selon un critère de proximité géographique. En électricité, on applique une fonction de 
+lissage aux températures réalisées (uniquement pour l’électricité). Cela permet de prendre 
+en compte le fait que les variations de températures ne se sont pas directement ressenties 
+par le client en raison d’éléments tels que l’inertie des bâtiments.  
+Une température seuil est définie pour chacune des stations météo spécifiques à l’électricité 
+ou au gaz. Elle correspond à la valeur de la température en dessous de laquelle on observe 
+un lien de dépendance linéaire entre consommation et température. 
+Les températures seuils, définies en annexe 2, sont exploitées pour calculer les degrés-jours 
+utilisés pour déterminer les thermosensibilités et les parts de consommation 
+thermosensibles. 
+Pour l’électricité, dans un premier temps, une version simplifiée se base sur la température 
+France lissée utilisée pour la reconstitution des flux. 
+                                                    Estimation des données de thermosensibilité et part thermosensible 
+ 
+3 Calcul des gradients de thermosensibilité à la maille PDL  
+ 
+L’objectif de cette partie est de décrire en détail la méthodologie appliquée  pour le calcul 
+des gradients à la maille PDL, en fonction de la quantité et de la granularité des données 
+de mesures individuelles disponibles pour chaque PDL. On distingue quatre catégories de 
+PDL : 
+ 
+- Les PDL relevés semestriellement (électricité et gaz) 
+- Les PDL relevés mensuellement (électricité et gaz) 
+- Les PDL relevés quotidiennement (électricité et gaz) 
+- Les sites télérelevés (uniquement électricité) 
+ 
+Les gradients individuels obtenus sont ensuite utilisés pour calculer des thermosensibilités 
+ainsi que des parts thermosensibles à la maille IRIS.  
+ 
+Pour certains sites, on dispose à la fois de relèves semestrielles, mensuelles et journalières 
+(uniquement électricité). Dans ce cas, on calcule le gradient du site à l’aide : 
+• des index journaliers si :  
+$	
+%	&'
+
+70 > max	(
+$	
+%	-'.
+24 ,
+$	
+%	-.
+7 ) 
+• des index mensuels si :  
+$	
+%	-'.
+24 > max	(
+$	
+%	&'
+
+70 ,
+$	
+%	-.
+7 ) 
+• des index semestriels si :  
+$	
+%	-.
+7 ≥ max	(
+$	
+%	&'
+
+70 ,
+$	
+%	-'.
+24 ) 
+ 
+ 
+ 
+3.1 PDL relevés semestriellement (gaz et électricit é) 
+Pour ces PDL, on procède au calcul d’un gradient par PDL. Ce calcul est réalisé, pour 
+chaque PDL sous réserve qu’il possède un nombre d’index de consommation réels 
+permettant de garantir une estimation suffisamment précise. Le nombre d’index semestriels 
+minimal dont on doit disposer est 7. Pour tous les PDL vérifiant cette condition, on calcule 
+un gradient par PDL selon la méthodologie décrite ci-dessous :  
+ 
+- On récupère l’ensemble des index de consommation dont on dispose, ce qui nous 
+permet de calculer des consommations semestrielles. On notera 4,5  la 
+consommation semestrielle du PDL pour le semestre S (6	 ∈ 	 81,2: de l’année A.  
+                                                    Estimation des données de thermosensibilité et part thermosensible 
+ 
+On calcule ensuite une consommation journalière moyenne par semestre en divisant 
+la consommation du semestre par le nombre de jours de consommation auquel le 
+relevé correspond. On note	$;4,5 ce nombre de jours.  
+ 
+- Pour chaque PDL, on calcule les deltas de consommations, notés	∆4,5, en 
+soustrayant à la consommation journalière semestrielle moyenne du PDL pour une 
+année donnée, la consommation moyenne journalière de ce même PDL sur le même 
+semestre de l’année précédente : 
+∆4,5 =
+4,5
+$;4,5 −
+4,5<=
+$;4,5<=  
+ 
+- On calcule les degrés-jours à l’aide des températures utilisées. Pour ce faire, on 
+calcule l’écart entre la température réelle et à la température seuil, lorsque celle-ci 
+est en dessous cette même température seuil : 
+> = max	(0, '. − ?>) 
+ 
+- Pour chaque consommation journalière semestrielle dont on dispose pour le PDL, on 
+calcule les degrés-jours moyens entre les dates de début et de fin du relevé. On 
+note ces degrés-jours moyens 4,5 
+ 
+- On calcule les deltas de degrés-jours associés à chaque delta de consommation 
+selon la même méthode :  
+∆4,5 = 4,5 −4,5<= 
+ 
+- On effectue une régression linéaire des moindres carrés1 entre les deltas de 
+consommation journalière moyenne, ∆, et les delta de degrés-jours, ∆ : 
+∆ = 	
+ ∗ ∆. 
+ 
+Les gradients obtenus sont exprimés en kWh/degré-jour. Ils ont, par ailleurs, pour propriété 
+d’être additifs à la maille des PDL rattachés à une même station météo. 
+ 
+3.2 PDL relevés mensuellement (gaz et électricité) 
+De même que pour le cas précédent, on procède au calcul d’un gradient par PDL. Ce calcul 
+est réalisé, pour chaque PDL sous réserve qu’il possède un nombre d’index de 
+consommation réels permettant de garantir une estimation suffisamment précise. Dans le 
+cas de relèves mensuelles, le nombre d’index mensuels minimal dont on doit disposer est 
+                                      
+1
+ La valeur de l’estimateur des moindres carrés est présentée en annexe 1 
+                                                    Estimation des données de thermosensibilité et part thermosensible 
+ 
+de 24 pour l’électricité. Pour tous les PDL vérifiant cette condition, on calcule un gradient 
+(détaillé par sous-profil dans le cas de l’électricité), selon la méthodologie décrite ci-
+dessous :  
+ 
+- On récupère l’ensemble des index de consommation dont on dispose, ce qui nous 
+permet alors de calculer des consommations mensuelles. On notera @,5  la 
+consommation mensuelle du PDL pour le mois M avec A	 ∈	 B1;12D de l’année A.  
+On calcule ensuite une consommation journalière moyenne par mois en divisant la 
+consommation du mois par le nombre de jours de consommation auquel elle 
+correspond. On note	$;@,5 ce nombre de jours.  
+ 
+- Pour chaque PDL, on calcule les deltas de consommation, notés	∆@,5, en 
+soustrayant à la consommation journalière moyenne d’un mois pour une année 
+donnée, la consommation journalière moyenne de ce même PDL sur le même mois, 
+l’année précédente : 
+∆@,5 =
+@,5
+$;@,5 −
+@,5<=
+$;@,5<=  
+ 
+- On calcule les degrés-jours à l’aide des températures utilisées. Pour ce faire, on 
+calcule l’écart entre la température réelle et la température seuil, lorsque celle-ci est 
+en dessous cette même température seuil : 
+> = max	(0, '. − ?>) 
+ 
+- Pour chaque consommation mensuelle dont on dispose pour le PDL, on calcule les 
+degrés-jours moyens entre les dates de début et de fin du relevé. On note ces 
+degrés-jours moyens @,5 
+ 
+- On calcule des deltas de degrés-jours associés à chaque delta de consommation 
+selon la même méthode :  
+∆@,5 = ∆@,5 − ∆@,5<= 
+ 
+- On effectue une régression linéaire des moindres carrés entre les deltas de 
+consommation ∆, et les deltas de degrés-jours ∆ : ∆ = 	
+ ∗
+∆. 
+ 
+De même que précédemment, les gradients obtenus sont exprimés en kWh/degré-jour. Ils 
+ont pour propriété d’être additifs à la maille des PDL rattachés à la même station météo.  
+ 
+                                                    Estimation des données de thermosensibilité et part thermosensible 
+ 
+ 
+3.3 PDL relevés quotidiennement (électricité et gaz ) 
+Dans le cas des PDL relevés quotidiennement, on procède directement au calcul d’un 
+gradient par PDL même si ce dernier possède plusieurs sous profils. Ce calcul est réalisé, 
+pour chaque PDL, sous réserve qu’il possède un nombre d’index de consommation suffisant 
+sur la période pour garantir une estimation précise. Cette période est restreinte à la période 
+d’hiver2 pour l’électricité tandis que l’ensemble de l’année est pris en compte dans le cas du 
+gaz. Dans le cas de relevés quotidiens, le nombre d’index quotidiens minimal dont on doit 
+disposer est de 70. Pour tous les PDL vérifiant ces conditions, on calcule un gradient, selon 
+la méthodologie décrite ci-dessous :  
+ 
+- On récupère l’ensemble des index de consommation dont on dispose ce qui nous 
+permet de calculer des consommations journalières. On note > la 
+consommation journalière du PDL pour le jour j. 
+ 
+- On retire de l’historique utilisé les consommations journalières susceptibles3 de 
+biaiser l’estimation, à savoir :  
+o Les consommations des mois d’été : deuxième quinzaine de mai, juin, juillet, 
+août 
+o Les consommations des jours correspondant aux vacances scolaires de Noël 
+o Les consommations des jours correspondant aux j-7 et J+7 des vacances 
+scolaires de Noël 
+ 
+- Pour chaque PDL, on calcule des deltas de consommation, notés	∆>, en 
+soustrayant à la consommation journalière du PDL, la consommation journalière de 
+ce même PDL sept jours avant : 
+∆> = > − ><E 
+ 
+- On calcule les degrés-jours à l’aide des températures utilisées. Pour ce faire, on 
+calcule l’écart entre la température réelle et la température seuil, lorsque celle-ci est 
+en dessous de cette même température seuil : 
+> = max	(0, '. − ?>) 
+ 
+                                      
+2
+ Période d’hiver : Période allant de mi-septembre à fin mai  
+3
+ Les mêmes périodes sont utilisées pour calculer les gradients utilisés dans le cadre de la Reconstitution des flux 
+(Chapitre F, Règles MA-RE). 
+                                                    Estimation des données de thermosensibilité et part thermosensible 
+ 
+- On calcule des deltas de degrés-jours associés à chaque delta de consommation 
+selon la même méthode :  
+∆> = > −><E 
+ 
+- On effectue une régression linéaire des moindres carrés des deltas de 
+consommation, ∆, sur les deltas de degrés-jours ∆ : ∆ = 	
+ ∗
+∆. 
+ 
+De même que précédemment, on obtient des gradients exprimés en kWh/degré-jour. 
+ 
+ 
+ 
+3.4 Sites disposant de courbes de charge (uniquemen t pour 
+l’électricité) 
+On calcule les consommations journalières du site puis on procède au calcul du gradient de 
+thermosensibilité du site selon la même méthode que les sites relevés quotidiennement.  
+ 
+ 
+ 
+3.5 Cas des sites pour lesquels on ne dispose pas d ’un 
+historique suffisant 
+Afin d’estimer un gradient suffisamment robuste, des seuils fixant le nombre d’index 
+minimal dont on doit disposer pour chaque site ont été définis.  
+ 
+Le tableau ci-dessous rappelle les seuils qui ont été fixés par catégorie de sites pour 
+l’électricité : 
+Table 2 : Nombre minimal d’index dont on doit disposer pour un site afin de calculer un 
+gradient 
+ 
+  
+                                                    Estimation des données de thermosensibilité et part thermosensible 
+ 
+ 
+ 
+ 
+ Electricité 
+Sites relevés 
+semestriellement 
+7 
+Sites relevés 
+mensuellement 
+24 
+Sites relevés 
+quotidiennement 
+70 
+ 
+Si ce seuil n’est pas satisfait, on ne calcule pas de gradient pour ce site, et on lui affecte un 
+gradient par défaut. Pour l’électricité, le gradient affecté par défaut dépend du profil et de 
+la puissance souscrite du site. Le tableau ci-dessous présente les gradients affectés par 
+défaut : 
+ Gradients par défaut en pourcentage de la consommation annuelle du site – électricité 
+ 
+ PS (kVA) RES PRO 
+Base 
+3 7% 2% 
+6 8% 12% 
+>=9 23% 14% 
+Autres 
+6 30% 10% 
+>=9 36% 11% 
+ 
+Pour le gaz, on calcule la thermosensibilité pour l’ensemble des PDL des IRIS. Néanmoins 
+on n’affiche que les données pour les IRIS composés d’au moins 300 PDL et pour lesquels 
+la part thermosensible est comprise entre 0 et 1. 
+4 Données publiées 
+ 
+Les données de thermosensibilité publiées dans le cadre du décret 2016-973 sont les 
+suivantes : 
+ 
+- Thermosensibilité en kWh/degré-jour à la maille IRIS : variation de la consommation 
+journalière en kWh due à une variation de 1°C de la température, pour les 
+températures inférieures à la température seuil faisant référence pour l’IRIS 
+considéré.  
+                                                    Estimation des données de thermosensibilité et part thermosensible 
+ 
+(Exemple : pour un IRIS dont la thermosensibilité est de 2000 kWh/degré-jour, cela 
+signifie que l’IRIS consommera quotidiennement 2000 kWh supplémentaires pour 
+chaque degré en dessous de la température seuil.). 
+- Part thermosensible en %, à la maille IRIS : pourcentage de la consommation totale 
+que l’on considère sensible à la température. Les gradients étant calculés sur un 
+historique assez long, la part thermosensible est calculée à partir d’un historique 
+glissant de 4 ans.  
+(Exemple : pour un IRIS dont la consommation est de 200 MWh, une part 
+thermosensible égale à 60% signifie que 120 MWh de sa consommation totale sont 
+consacrés au chauffage). 
+ 
+Les thermosensibilités sont publiées à la maille IRIS4 pour le segment résidentiel au sens de 
+l’article 179 de la loi de transition énergétique pour la croissance verte.  
+ 
+Elles sont calculées en sommant l’ensemble des gradients des PDL rattachés à l’IRIS :  
+ 
+ℎ-$.éGHG4,			4IJKL = M 	
+NO
+PQ	∈	GHG4,			4IJKL
+ 
+ 
+Les parts de consommation thermosensibles sont calculées en divisant la consommation 
+thermosensible de l’IRIS par la consommation totale de l’IRIS. La consommation 
+thermosensible de l’IRIS pour une année donnée est obtenue en multipliant la 
+thermosensibilité de l’IRIS par la somme des degrés-jours de l’année :  
+ 
+N	ℎ-$.GHG4,4IJKL,5KKé = 	
+	
+GHG4,4IJKL ∗ ∑ 5KKé
+--		.GHG4,4IJKL  
+ 
+Toutefois, comme expliqué précédemment, afin d’éviter que les aléas météorologiques 
+n’impactent trop fortement les parts thermosensibles publiées chaque année, celles-ci 
+correspondent à une moyenne calculée à partir d’un historique de 4 ans : 
+ 
+N	ℎ-$.N'$GHG4,5KKé =
+∑ --	ℎ-$.GHG4,55∈B5KKé<S,5KKéD
+∑ --		.GHG4,55∈B5KKé<S,5KKéD  
+ 
+Les données de thermosensibilité et de parts thermosensibles ne sont publiées pour un IRIS 
+que lorsque l’estimation est suffisamment précise. Compte tenu de la proportion importante 
+de PDL qui sont relevés semestriellement, le manque de robustesse des estimations à des 
+mailles fines impose un nombre minimal de PDL par agrégat afin que le foisonnement de 
+                                      
+4
+ Rappelons que la thermosensibilté et la part thermosensible ne concernent que les PDL du secteur résidentiel 
+                                                    Estimation des données de thermosensibilité et part thermosensible 
+ 
+ces derniers garantisse une précision suffisante. Dans le cas de l’électricité, le seuil de 
+précision retenu est de 500 PDL par agrégat. Pour le gaz, ce seuil est fixé à 300 PDL par 
+agrégat. Dès lors que l’on disposera d’un nombre de sites équipés de compteurs 
+communicants assez important, il nous sera possible de réduire ce seuil de significativité.  
+5 Interprétation des données 
+ 
+Les données publiées permettent de refléter les thermosensibilités des consommations 
+annuelles d’électricité et de gaz à la maille IRIS, c’est-à-dire, la proportion des 
+consommations sensibles à la température. Les  thermosensibilités calculées pour 
+l’électricité et pour le gaz étant obtenues à l’aide de la même méthodologie et étant 
+exprimées dans la même unité, il est possible de les sommer, et ainsi, d’obtenir des 
+données de thermosensibilité agrégées « électricité et gaz ». Cela permet d’évaluer la 
+thermosensibilité globale de l’IRIS pour ces deux énergies confondues. Pour ce qui est des 
+parts thermosensibles : si l’on souhaite obtenir une part thermosensible agrégée, il est 
+nécessaire de recalculer une consommation thermosensible agrégée et diviser par le total 
+de la consommation « électricité » et « gaz » de l’IRIS.  
+ 
+Par ailleurs, si les données publiées permettent de comparer la thermosensibilité entre IRIS, 
+il faut noter qu’il s’agit de données estimées et que de faibles écarts entre deux IRIS ne 
+permettent pas de conclure strictement qu’un IRIS est plus thermosensible que l’autre. De 
+plus, les gradients étant calculés pour la plupart des PDL sur un historique de 
+consommation assez long (cas des PDL relevés semestriellement), les données publiées ne 
+permettent pas encore d’étudier des évolutions de thermosensibilité. Cela pourra être rendu 
+possible dès lors que le nombre de compteurs communicants déployés sera assez 
+important. 
+ 
+Les utilisateurs pourront donc analyser ces données à la maille IRIS et ainsi appréhender 
+l’impact de la température sur la consommation annuelle et sur le pourcentage résultant 
+directement de la variation de température. Les collectivités se placent comme les 
+utilisateurs principaux de ces éléments dans le cadre d’études visant à donner de la visibilité 
+sur ces problématiques. A terme, cela s’inscrit dans la lignée du Plan Climat-Air-Energie 
+Territorial (PCAET) et des objectifs nationaux de la Loi de Transition Energétique pour une 
+Croissance Verte (LTECV) à l’horizon 2030. 
+ 
+ 
+  
+                                                    Estimation des données de thermosensibilité et part thermosensible 
+ 
+ 
+Annexes 
+ 
+Annexe 1 : Estimateur des moindres carrés 
+ 
+ 
+Le gradient de thermosensibilité est calculé à l’aide d’une estimation des moindres carrés de 
+deltas de consommation sur des deltas de température. On estime la relation linéaire 
+suivante : 
+ 
+∆ = 	T	
+ ∗ ∆ 
+ 
+Avec ∆ des deltas de degrés-jours et ∆	des deltas de consommation.  
+ 
+Une estimation de cette relation à l’aide des moindres carrés revient à minimiser la somme 
+des carrés des écarts des valeurs observées c’est-à-dire à répondre au problème 
+d’optimisation suivante : 
+ 
+minIWXKL M (∆ − (T	
+ ∗ ∆))∈BY;KD
+ 
+ 
+Avec 	le nombre d’observations dans l’échantillon d’estimation. 
+ 
+La valeur de l’estimateur du gradient de température est donc la suivante :  
+ 
+T	
+Z[ = ∑ (∆−
+\\\\\\)(∆ − ∆\\\\\\\\\\)∈BY;KD
+∑ ( −\\\\\\)²∈BY;KD
+ 
+ 
+Avec %̅ ∶	la moyenne des valeurs observées pour la variable %. 
+ 
+  
+                                                    Estimation des données de thermosensibilité et part thermosensible 
+ 
+ 
+Annexe 2 : Températures seuils locales par station météo 
+ 
+ 
+Tableaux : températures seuils utilisées pour le calcul de la thermosensibilité  
+ 
+ 
+Stations météo 
+Electricité 
+T seuil (°C) 
+  
+Stations météo 
+Gaz 
+T seuil (°C) 
+Abbeville 17 Agen 16,5 
+Bordeaux 16 Auxerre-Perrigny 15,5 
+Boulogne-sur-Mer 16 Bâle-Mulhouse 16 
+Bourges 15 Besançon 15,5 
+Bourg-Saint-
+Maurice 
+15 Biarritz-Anglet 17 
+Brest 14,5 Bonneville 16 
+Caen 15 
+Bordeaux 
+Mérignac 
+16,5 
+Clermont-Ferrand 16 Bourges 15,5 
+Dijon 16 Brest-Guipavas 14,5 
+Le Luc 18 Chambéry-Aix 16 
+Lille 17,5 Chartres 15 
+Limoges 14,5 Clermont-Ferrand 16 
+Lyon 17 Cognac 17 
+Marseille 18 
+Colmar-
+Meyenheim 
+15,5 
+Montpellier 17 Dijon-Longvic 16 
+Mulhouse 16,5 Dinard-le-Pleurtuit 15,5 
+Nancy 17 Entzheim 16 
+Nantes 15 
+Grenoble-St-
+Geoirs 
+16 
+Nevers 15,5 Lille-Lesquin 15,5 
+Nice 17,5 Luxeuil 15,5 
+Nîmes 17 Lyon-Bron 16,5 
+Orange 17 Marignane 18 
+Paris 16,5 Metz-Frescaty 16 
+Perpignan 17 Montélimar 16,5 
+                                                    Estimation des données de thermosensibilité et part thermosensible 
+ 
+Rennes 15 
+Nantes-
+Bouguenais 
+15,5 
+Saint Auban 16,5 Nice 17,5 
+Strasbourg 18 Nîmes-Courbessac 17 
+Tarbes 14,5 Paris-Montsouris 17 
+Toulouse 16,5 Pau-Uzein 16,5 
+Tours 15 Perpignan 17 
+Trappes 15 Reims-Prunay 15,5 
+Troyes 15 Rouen-Boos 15,5 
+St-Etienne-
+Bouthéon 
+16,5 
+Toulouse-Blagnac 16,5 
+Tours 15,5 
+ 

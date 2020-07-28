@@ -1,0 +1,545 @@
+ 
+1 
+ 
+ 
+ 
+Description du Jeu de données consommation et 
+thermosensibilité électriques annuelles par 
+secteur d’activité 
+ 
+ 
+ 
+ 
+  
+Version : V3 
+Nb. de pages : 12 
+ 
+ 
+Version Date d’application Nature de la modification Annule et remplace 
+V0 02/11/2016 Initialisation   
+V1 25/07/2017 Ajout définition des intercommunalités  
+V2 01/12/2017 Précisions sur données et sources INSEE  
+V3 18/07/2019 
+Données de thermosensibilité et ajout d’une 
+description des variables 
+ 
+V4 10/03/2020 
+Ventilation des données des entreprises par code 
+NAF 
+Changement du seuil d’agrégation pour la protection 
+des DCP 
+Changement de structure du jeu de données 
+ 
+ 
+Document(s) associé(s) et annexe(s) : 
+ 
+ 
+Résumé / Avertissement 
+Cette note décrit le jeu de données consommation et thermosensibilité électriques annuelles par secteur 
+d'activité 
+ 
+ 
+ 
+ 
+ 
+ 
+2 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+SOMMAIRE 
+ 
+Définitions ......................................................................................................................................... 3 
+Clés de lecture du jeu de données .................................................................................................. 6 
+Méthodologie de calcul des données de consommation annuelle d’électricité et de 
+nombre de sites ................................................................................................................................ 7 
+Méthodologie de calcul des données de thermosensibilité annuelle d’électricité .................. 8 
+Définition des champs du jeu de données .................................................................................... 9 
+Table de correspondance entre les codes NAF niveau 2 et les secteurs d’activité ................. 12 
+ 
+ 
+3 
+ 
+Définitions 
+ 
+IRIS 
+L’Insee a défini les « Ilots Regroupés pour l'Information Statistique » (IRIS) comme la brique de base 
+en matière de données infra-communales. Elle doit respecter des critères géographiques et 
+démographiques et avoir des contours identifiables sans ambiguïté et stables dans le temps. » 
+« Les communes d'au moins 10 000 habitants et une forte proportion des communes de 5 000 à      
+10 000 habitants sont découpées en IRIS. La France compte environ 16 100 IRIS dont 650 dans les 
+DOM. » 
+ 
+Par extension, afin de couvrir l'ensemble du territoire, on assimile à un IRIS chacune des communes 
+non découpées en IRIS.  On parle d’IRIS de type Z. 
+ 
+« On distingue trois types d'IRIS : 
+ - Type H, « IRIS d'habitat : leur population se situe en général entre 1 800 et 5 000 habitants. 
+Ils sont homogènes quant au type d'habitat et leurs limites s'appuient sur les grandes 
+coupures du tissu urbain (voies principales, voies ferrées, cours d'eau...) » 
+- Type A, « IRIS d'activité : ils regroupent plus de 1 000 salariés et comptent au moins deux 
+fois plus d'emplois salariés que de population résidente » 
+- Type D, « IRIS « divers » : il s'agit de grandes zones spécifiques peu habitées et ayant une 
+superficie importante (parcs de loisirs, zones portuaires, forêts...)» 
+ 
+EPCI  
+Définition de l’Insee : « Les établissements publics de coopération intercommunale (EPCI) sont des 
+regroupements de communes ayant pour objet l'élaboration de ‘projets communs de développement 
+au sein de périmètres de solidarité ‘. Ils sont soumis à des règles communes, homogènes et 
+comparables à celles de collectivités locales. » 
+Les informations présentées ici concernent les EPCI à fiscalité propre : 
+Communauté Urbaine (CU), Communauté d'Agglomération (CA), Communauté de Communes (CC), 
+Syndicat d’Agglomération (SA), Métropole (ME). 
+ 
+Site de consommation 
+Personne physique ou morale ayant signé un contrat d’achat d’électricité 
+ 
+Catégorie des Résidentiels 
+La catégorie des Résidentiels regroupe les sites de consommation résidentiels raccordés au réseau 
+Enedis en basse tension (BT) de puissance souscrite ≤ 36 kVA.  
+ 
+Catégorie des Petits professionnels 
+La catégorie des Petits professionnels regroupe les sites de consommation professionnels raccordés 
+au réseau Enedis en basse tension (BT) dont la puissance souscrite est ≤ 36 kVA. 
+ 
+Catégorie des Entreprises 
+La catégorie des Entreprises regroupe les sites de consommation professionnels raccordés au réseau 
+Enedis en basse tension (BT) dont la puissance souscrite est > 36 kVA ou raccordés en HTA. 
+ 
+4 
+ 
+ 
+ 
+ 
+Secteurs d’activité 
+Les données des catégories des Petits professionnels et Entreprises sont ventilées par secteur 
+d’activité : agriculture, tertiaire, industrie. Ils sont déduits des codes NAF niveau 2 de ces sites. La 
+correspondance entre code NAF niveau 2 et secteur d’activité est présentée en annexe. Si pour un 
+site Entreprise donné, Enedis ne dispose pas de l’information code NAF, alors on lui attribue le 
+secteur « Autres ». 
+ 
+Température seuil  
+Seuil de température au-delà duquel la température réalisée a un impact sur la consommation 
+électrique. 
+ 
+Thermosensibilité  
+Thermosensibilité d’hiver, soit l’augmentation de la consommation électrique due à une diminution 
+d’1°C de la température réalisée, en-dessous d’une température seuil 
+ 
+Part thermosensible  
+Part de la consommation électrique, due aux usages thermosensibles 
+ 
+Température réalisée  
+Température mesurée par Météo France 
+ 
+Température normale  
+Température moyenne ou « normale saisonnière » établie pour une durée de 10 ans en fonction de 
+températures constatées sur une période de 30 ans. 
+ 
+Température locale 
+Afin de garantir une estimation des données de thermosensibilité la plus précise possible, on utilise 
+les données de températures locales des stations météo de Météo France, qui font référence (cf Note 
+technique). Les températures seuil, réalisée et normale sont déterminées en fonction des 
+températures locales. 
+ 
+DJU 
+Le degré jour unifié (DJU) est la différence entre la température locale réalisée moyenne sur une 
+journée et la température seuil locale. Il permet de réaliser des estimations de consommations 
+d'énergie thermique. 
+ 
+Consommation à température réalisée 
+Consommation électrique annuelle calculée à partir des relevés des sites. 
+ 
+Consommation corrigée de l’aléa climatique 
+Consommation électrique annuelle modélisée pour des températures normales. 
+ 
+ 
+5 
+ 
+Données habitat  
+Les données complémentaires au jeu de données Consommation relatives à l’habitat, sont issues de 
+l'enquête Logement réalisée par l’INSEE en 2013.  
+Il s’agit ici des données suivantes : le nombre d’habitants, le taux de logements collectifs, le taux de 
+résidences principales et au sein de cette dernière catégorie : le taux de chauffage électrique, le taux 
+de logements par superficie et le taux de résidences par période de construction.  
+ 
+ 
+Les fichiers sources utilisés sont les suivants :  
+Données relatives à la population : fichier base-ic-evol-struct-pop-2013.xls 
+Données infra-communales - Population France - IRIS (hors Mayotte) - Mis en ligne le 18/10/2016 – 
+Géographie en vigueur au 01/01/2015 
+©Insee       Sources : Insee, Recensements de la population 2013 
+ 
+Données relatives à la typologie des logements : fichier base-ic-logement-2013 
+Données infra-communales – Logement - France - IRIS (hors Mayotte) - Mise en ligne le 18/10/2016 
+– Géographie en vigueur au 01/01/2015 
+©Insee       Sources : Insee, Recensement de la population 2013 
+ 
+Règle de gestion - calcul des taux 
+Ci-après les règles de gestion appliquées pour les données INSEE : 
+ 
+Nombre d'habitants P13_POP 
+Taux de logements collectifs P13_APPART/ (P13_MAISON + P13_APPART) 
+Taux de résidences principales P13_RP / (P13_RP+ P13_RSECOCC) 
+Superficie des logements < 30 m2 P13_RP_M30M2 
+Superficie des logements 30 à 40 m2 P13_RP_3040M2 
+Superficie des logements 40 à 60 m2 P13_RP_4060M2 
+Superficie des logements 60 à 80 m2 P13_RP_6080M2 
+Superficie des logements 80 à 100 m2 P13_RP_80100M2 
+Superficie des logements > 100 m2 P13_RP_100120M2 + P13_RP_120M2P 
+Résidences principales avant 1919 P13_RP_ACH19 
+Résidences principales de 1919 à 1945 P13_RP_ACH45 
+Résidences principales de 1946 à 1970 P13_RP_ACH70 
+Résidences principales de 1971 à 1990 P13_RP_ACH90 
+Résidences principales de 1991 à 2005 P13_RP_ACH05 
+Résidences principales de 2006 à 2010 P13_RP_ACH10 
+Résidences principales après 2011 P13_RP-P13_RP_ACH19-P13_RP_ACH45-
+P13_RP_ACH70-P13_RP_ACH90-P13_(0 si négatif) 
+Taux de chauffage électrique P13_RP_CINDELEC / P13_RP 
+ 
+  
+ 
+6 
+ 
+Clés de lecture du jeu de données 
+  
+Evolution du jeu de données à partir du millésime 2018 
+ 
+ Le Décret no 2020-196 du 4 mars 2020 modifiant les modalités de mise à disposition des personnes 
+publiques de données relatives au transport, à la distribution et à la production d’électricité, de gaz 
+naturel et de biométhane, de chaleur et de froid entraîne une évolution du jeu de données, à partir 
+du millésime 2018 : 
+- Apparition de la catégorie des Petits professionnels qui correspond à la catégorie 
+anciennement désignée Professionnels dans les versions précédentes du jeu de données  
+- Apparition de la catégorie des Entreprises 
+- Les données de consommation annuelle des entreprises sont ventilées par code NAF niveau 2 
+- Le seuil de protection des données des catégories des Résidentiels et des Petits 
+professionnels est modifié. 
+Par conséquent, de nouvelles modalités apparaissent dans les jeux de données et leur structure 
+évolue. 
+ 
+ 
+Mailles géographiques  
+Pour chaque année A d’historique des données, les mailles COMMUNE, EPCI, DEPARTEMENT, 
+REGION indiquées sont cohérentes avec le Code officiel géographique de l’INSEE de l’année A. 
+La référence IRIS utilisée pour les années 2011 à 2015 est celle de 2014, puis, pour une année A 
+postérieure à 2015, la référence IRIS est celle de l’année A-1. 
+ 
+Dans le jeu de données, lorsqu’un EPCI s’étend sur plusieurs régions, l’EPCI est rattachée à une de ces 
+régions. En revanche, la consommation électrique et le nombre de sites de l’EPCI sont répartis sur les 
+régions adéquates. 
+ 
+Dans le jeu de données, certains IRIS ont un code INSEE finissant par les caractères XXXX. Il s’agit 
+d’IRIS fictifs qui contiennent les données des sites que l’on n’a pas pu rattacher à leur IRIS. Ces IRIS 
+fictifs ne sont pas représentés sur la carte. 
+ 
+Dans le jeu de données, certaines mailles IRIS sont rattachées à un EPCI dont le code INSEE est 
+ZZZZZZZZZ. Il s’agit de mailles IRIS de communes qui ne sont rattachées à aucun EPCI.  
+ 
+Champs du jeu de données 
+Lorsque sur une maille géographique donnée il n’y a pas de site de consommation, on indique 0 dans 
+les champs nombre de sites et consommation. Sur la carte, la zone est gris clair avec la mention 
+« absence de sites » 
+Lorsque sur une maille géographique donnée, les informations sont confidentielles, il n’y a aucune 
+valeur dans les champs nombre de sites et consommation. Sur la carte, la zone est gris sombre avec 
+la mention « Secret statistique ». 
+Lorsqu’une maille comporte moins de 500 sites, la donnée de thermosensibilité n’est pas assez 
+robuste statistiquement, elle est donc également secrétisée. Sur la carte, la zone est gris sombre avec 
+la mention « Secret statistique ». 
+ 
+ 
+7 
+ 
+ 
+Energie annuelle totale ou moyenne 
+Pour un secteur ou une catégorie donnée, sur une maille géographique donnée, l’énergie annuelle 
+totale correspond au volume d’électricité consommée sur une année par l’ensemble des sites du 
+secteur ou de la catégorie sur la maille géographique. 
+ 
+Pour un secteur ou une catégorie donnée, sur une maille géographique donnée, l’énergie annuelle 
+moyenne correspond au volume d’électricité consommée sur une année par l’ensemble des sites du 
+secteur ou de la catégorie sur la maille géographique, divisée par le nombre de sites. 
+ 
+Données de thermosensibilité annuelle 
+La thermosensibilité calculée dans le jeu de données correspond à la thermosensibilité d’hiver. Elle 
+représente la variation de consommation engendrée par une variation de la température, en deçà 
+d’un certain seuil de température. Elle vise ainsi à évaluer l’influence de la température sur la 
+consommation d’énergie. Par exemple, une baisse de température d’un degré en moyenne d’un jour 
+à l’autre fait augmenter la consommation de 1 kWh. Ceci correspond alors à une thermosensibilité de 
+1 kWh/degré-jour, aussi appelée gradient de température. Dans le jeu de données, cette grandeur est 
+calculée pour une année.  
+La part thermosensible, représente le pourcentage de consommation sensible aux variations de 
+température. La plupart des consommations en effet, peuvent se diviser en une part indépendante de 
+la température – non thermosensible – et une part qui dépend de la température – thermosensible. 
+Dans le jeu de données, cette grandeur est calculée pour une année. Les calculs sont réalisés avec des 
+données de températures locales. 
+Ces données sont mises à disposition dans le jeu de données pour les clients de la catégorie des 
+Résidentiels, pour les mailles contenant plus de 500 sites, pour des raisons de robustesse statistique. 
+. 
+Méthodologie de calcul des données de consommation annuelle 
+d’électricité et de nombre de sites 
+ 
+ 
+Calcul des énergies annuelles 
+Le calcul des énergies annuelles s’effectue de la même façon que les bilans électriques construits 
+dans le cadre de la Reconstitution des flux pour le processus RecoTemp, décrite dans les règles du 
+dispositif de Responsable d’Equilibre. 
+Il s’effectue pour les clients profilés en quatre étapes : 
+ 
+1. Les facteurs d’usage de chaque client déjà calculés pour les bilans RecoTemp sont utilisés. Il 
+s’agit de la puissance annuelle calculée pour chaque poste horosaisonnier à l’aide des 
+consommations mesurées entre deux relevés. 
+2. Lorsqu’un facteur d’usage est calculé sur une période comprise à l’intérieur d’une année civile, 
+il est comptabilisé comme énergie « mesurée » du client, au sens de l’arrêté du 18 juillet 2016. 
+3. Lorsqu’un facteur d’usage est calculé sur une période à cheval sur deux années civiles, la 
+répartition entre les différentes années est effectuée en utilisant le profil ajusté à la 
+température de la période (méthode appelée « au prorata profilis »). Cette énergie est 
+identifiée comme « modélisée » et agrégée à l’énergie « mesurée » pour représenter l’énergie 
+annuelle du site. 
+ 
+8 
+ 
+4. Lorsque, pour une année civile donnée, le facteur d’usage le plus récent ne couvre pas la fin 
+de l’année civile (cela peut arriver si le client n’a pas pu être relevé lors du dernier semestre), 
+nous utilisons la dernière valeur connue. Cette énergie est comptée comme « modélisée ». Elle 
+est prise en compte dans la consommation annuelle du site. 
+ 
+Pour les clients traités en courbe de charge dans la reconstitution des flux, l’énergie annuelle est 
+obtenue en calculant l’intégrale de la courbe de charge sur l’année civile.  
+ 
+Protection des données 
+Les données sont protégées de façon à préserver la confidentialité des Données à Caractère 
+Personnel.  
+Pour les millésimes 2011 à 2017 : 
+Pour les catégories des Résidentiels et des Petits professionnels, seuls sont diffusés les nombres de 
+sites et les consommations des agrégats contenant 11 sites ou plus. 
+ 
+A partir du millésime 2018 : 
+Pour la catégorie des Résidentiels, seuls sont diffusés les nombres de sites et les consommations des 
+agrégats contenant 10 sites ou plus. 
+Pour la catégorie des Petits professionnels, seuls sont diffusés les nombres de sites et les 
+consommations des agrégats contenant 10 sites ou plus ou dont la consommation annuelle dépasse 
+50 MWh. 
+ 
+ 
+ 
+Le secret induit est également protégé : les agrégats sont masqués si leur diffusion permet par 
+recoupement de retrouver des données de sites secrétisés. 
+ 
+Pour les millésimes avant 2018 : Si à la maille commune, EPCI, département ou région, un agrégat 
+résidentiel (resp. Petit professionnel) doit être masqué du fait du secret induit, alors on affiche un 
+total partiel correspondant à la consommation et au nombre de sites des mailles IRIS non protégées 
+sur la maille considérée, ceci uniquement si la différence entre le total réel et le total partiel est 
+inférieure à quelques pourcents. Dans ce cas, on affiche aussi les données de thermosensibilité sur le 
+périmètre des IRIS dont la consommation résidentielle n’est pas protégée, à condition que la maille 
+considérée comporte plus de 500 sites résidentiels. 
+A partir du millésime 2018, si un agrégat doit être masqué, alors on affiche le total partiel, à savoir la 
+somme des consommations, nombre de sites ou données de thermosensibilité des mailles IRIS non 
+masquées de l’agrégat. La colonne « nombre de mailles secrétisées » indique le nombre de mailles 
+IRIS masquées sur l’agrégat. Cette information donne une idée de l’écart entre le total partiel affiché 
+et le total exact masqué. 
+ 
+ 
+Méthodologie de calcul des données de thermosensibilité annuelle 
+d’électricité 
+ 
+Merci de vous reporter à la note technique Estimation des données de thermosensibilité et part 
+thermosensible. 
+La thermosensibilité annuelle électrique est une donnée calculée pour une année donnée. Les règles 
+de protection sont donc les mêmes que pour les énergies annuelles. 
+ 
+9 
+ 
+Définition des champs du jeu de données  
+ 
+Libellé du champ Définition du champ 
+Année Année calendaire 
+Nom région Nom de la région 
+Code région Code INSEE de la région 
+Nom département Nom du département 
+Code département Code INSEE du département 
+Nom EPCI Nom de l'EPCI 
+Code EPCI Code INSEE de l'EPCI 
+Type EPCI Type de l'EPCI 
+Nom commune Nom de la commune 
+Code commune Code INSEE de la commune 
+Nom IRIS Nom de l'IRIS 
+Code IRIS Code INSEE de l'IRIS 
+Type IRIS Type de l'IRIS 
+CODE CATEGORIE CONSOMMATION 
+Indique si le site est dans la catégorie Résidentiels, 
+Petits professionnels, Entreprises, avec les codes 
+respectifs RES, PRO, ENT 
+CODE GRAND SECTEUR 
+Secteur d'activité : Tertiaire, Agriculture, Industrie, 
+Autres 
+CODE SECTEUR NAF2 Code NAF niveau 2 
+Nb sites Nombre de sites du ou des secteurs sélectionnés 
+Conso totale (MWh) 
+Consommation électrique totale à températures 
+réalisées des sites du secteur sélectionné sur la 
+maille considérée (MWh) 
+Conso moyenne (MWh) 
+Consommation électrique moyenne à températures 
+réalisées par site du secteur sélectionné sur la maille 
+considérée (MWh) 
+Conso totale usages thermosensibles (MWh) 
+Consommation électrique totale à températures 
+réalisées liée aux usages thermosensibles des sites 
+du secteur Résidentiel sur la maille considérée 
+(MWh) 
+Conso totale usages non thermosensibles (MWh) 
+Consommation électrique totale à températures 
+réalisées liée aux usages non thermosensibles des 
+sites du secteur Résidentiel sur la maille considérée 
+(MWh) 
+ 
+10 
+ 
+Conso moyenne usages thermosensibles (MWh) 
+Consommation électrique moyenne à températures 
+réalisées liée aux usages thermosensibles par site 
+du secteur Résidentiel sur la maille considérée 
+(MWh) 
+Conso moyenne  usages non thermosensibles 
+(MWh) 
+Consommation électrique moyenne à températures 
+réalisées liée aux usages non thermosensibles par 
+site du secteur Résidentiel sur la maille considérée 
+(MWh) 
+Part Thermosensible (%) 
+Part thermosensible moyenne des sites du secteur 
+Résidentiel sur la maille considérée 
+Thermosensibilité totale (kWh/DJU) 
+Thermosensibilité annuelle totale des sites du 
+secteur Résidentiel sur la maille considérée 
+Thermosensibilité moyenne (kWh/DJU) 
+Thermosensibilité annuelle moyenne par site du 
+secteur Résidentiel sur la maille considérée 
+Conso totale corrigée de l'aléa climatique 
+Résidentiel usages thermosensibles (MWh) 
+Consommation électrique totale corrigée de l'aléa 
+climatique liée aux usages thermosensibles des sites 
+du secteur Résidentiel sur la maille considérée 
+(MWh) 
+Conso totale corrigée de l'aléa climatique usages 
+thermosensibles (MWh) 
+Consommation électrique totale corrigée de l'aléa 
+climatique liée aux usages thermosensibles par site 
+du secteur Résidentiel sur la maille considérée 
+(MWh) 
+Nombre de mailles secrétisées 
+Nombre de maille IRIS secrétisées à l’intérieur d’une 
+maille géographique plus grande que l’IRIS 
+DJU à TR Dégrés-Jours Unifiés à températures réalisées en °C 
+DJU à TN Dégrés-Jours Unifiés à températures normales en °C 
+Nombre d'habitants Nombre d'habitants 
+Taux de logements collectifs Taux de logements collectifs (%) 
+Taux de résidences principales Taux de résidences principales (%) 
+Superficie des logements < 30 m2 
+Taux de logements principaux ayant une superficie 
+de moins de 30 m2 
+Superficie des logements 30 à 40 m2 
+Taux de logements principaux ayant une superficie 
+comprise entre 30 m2 et 40 m2 
+Superficie des logements 40 à 60 m2 
+Taux de logements principaux ayant une superficie 
+comprise entre 40 m2 et 60 m2 
+Superficie des logements 60 à 80 m2 
+Taux de logements principaux ayant une superficie 
+comprise entre 60 m2 et 80 m2 
+ 
+11 
+ 
+Superficie des logements 80 à 100 m2 
+Taux de logements principaux ayant une superficie 
+comprise entre 80 m2 et 100 m2 
+Superficie des logements > 100 m2 
+Taux de logements principaux ayant une superficie 
+de plus de 100 m2 
+Résidences principales avant 1919 Taux de logements principaux construits avant 1919 
+Résidences principales de 1919 à 1945 
+Taux de logements principaux construits entre 1919 
+et 1945 
+Résidences principales de 1946 à 1970 
+Taux de logements principaux construits entre 1946 
+et 1970 
+Résidences principales de 1971 à 1990 
+Taux de logements principaux construits entre 1971 
+et 1990 
+Résidences principales de 1991 à 2005 
+Taux de logements principaux construits entre 1991 
+et 2005 
+Résidences principales de 2006 à 2010 
+Taux de logements principaux construits entre 2006 
+et 2010 
+Résidences principales après 2011 Taux de logements principaux construits après 2011 
+Taux de chauffage électrique 
+Taux de logements principaux équipés de chauffage 
+électrique 
+geom Forme géographique 
+geo_point_2d Point géographique 
+ 
+ 
+12 
+ 
+Table de correspondance entre les codes NAF niveau 2 et les secteurs 
+d’activité 
+ 
+ 
+NAF rév. 2, 2008 (édition 2015)
+Secteur d'activité au sens du 
+décret du 28 juillet 2016
+NAF rév. 2, 2008 (édition 2015)
+Secteur d'activité au sens du 
+décret du 28 juillet 2016
+01 Agriculture 50 Tertiaire
+02 Agriculture 51 Tertiaire
+03 Agriculture 52 Tertiaire
+05 Industrie 53 Tertiaire
+06 Industrie 55 Tertiaire
+07 Industrie 56 Tertiaire
+08 Industrie 58 Tertiaire
+09 Industrie 59 Tertiaire
+10 Industrie 60 Tertiaire
+11 Industrie 61 Tertiaire
+12 Industrie 62 Tertiaire
+13 Industrie 63 Tertiaire
+14 Industrie 64 Tertiaire
+15 Industrie 65 Tertiaire
+16 Industrie 66 Tertiaire
+17 Industrie 68 Tertiaire
+18 Industrie 69 Tertiaire
+19 Industrie 70 Tertiaire
+20 Industrie 71 Tertiaire
+21 Industrie 72 Tertiaire
+22 Industrie 73 Tertiaire
+23 Industrie 74 Tertiaire
+24 Industrie 75 Tertiaire
+25 Industrie 77 Tertiaire
+26 Industrie 78 Tertiaire
+27 Industrie 79 Tertiaire
+28 Industrie 80 Tertiaire
+29 Industrie 81 Tertiaire
+30 Industrie 82 Tertiaire
+31 Industrie 84 Tertiaire
+32 Industrie 85 Tertiaire
+33 Industrie 86 Tertiaire
+35 Industrie 87 Tertiaire
+36 Tertiaire 88 Tertiaire
+37 Tertiaire 90 Tertiaire
+38 Tertiaire 91 Tertiaire
+39 Tertiaire 92 Tertiaire
+41 Industrie 93 Tertiaire
+42 Industrie 94 Tertiaire
+43 Industrie 95 Tertiaire
+45 Tertiaire 96 Tertiaire
+46 Tertiaire 97 Tertiaire
+47 Tertiaire 98 Tertiaire
+49 Tertiaire 99 Tertiaire

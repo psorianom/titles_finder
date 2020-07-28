@@ -1,0 +1,177 @@
+ 
+Page : 1/4 
+Enedis - Tour Enedis 
+34 place des Corolles 
+92079 Paris La Défense Cedex 
+enedis.fr  
+SA à directoire et à conseil de surveillance 
+Capital de 270 037 000 euros 
+R.C.S. de Nanterre 444 608 442 
+Enedis est certifié ISO 14001 pour l’environnement  
+ 
+Aide en ligne - Dictionnaire de données 
+ Jeu de données production électrique annuelle 
+ 
+Identification : ENEDIS-GUI-NUM-02 
+Version : V2 
+Nb. de pages : 4 
+ 
+ 
+Version Date d’application Nature de la modification Annule et remplace 
+V0 02/05/2017 Initialisation   
+V1 09/02/2018 Ajout définition des intercommunalités  
+V2 25/04/2018 Suppression du secret statistique  
+ 
+Annexe : / 
+ 
+ 
+Résumé / Avertissement 
+Cette note est une aide en ligne et un dictionnaire de données à destination des ré-utilisateurs du jeu de données production 
+électrique annuelle à maille IRIS sur le réseau géré par Enedis. 
+ 
+ 
+ 
+NEDI / La Fabrique Numérique 
+ 
+ 
+ 
+Page : 2/4 
+ENEDIS-GUI-NUM-02 
+V2 
+02/05/2017  
+ 
+SOMMAIRE 
+Définitions ........................................................................................................................................... 2 
+Clés de lecture du jeu de données ......................................................................................................... 3 
+Méthodologie de calcul des données de production annuelle d’électricité et du nombre de sites sur le 
+réseau Enedis ................................................................................................................................ 3 
+ Calcul des énergies annuelles ......................................................................................................... 3 
+ Protection des données ................................................................................................................. 4 
+ 
+ 
+Définitions 
+ 
+IRIS 
+D’après la définition de l’Insee : IRIS signifie « Ilots Regroupés pour l'Information Statistique ». Cette maille « constitue la 
+brique de base en matière de données infra-communales. Elle doit respecter des critères géographiques et démographiques et 
+avoir des contours identifiables sans ambigüité et stables dans le temps. » 
+« Les communes d'au moins 10 000 habitants et une forte proportion des communes de 5 000 à 10 000 habitants sont 
+découpées en IRIS. La France compte environ 16 100 IRIS dont 650 dans les DOM. » 
+ 
+« Par extension, afin de couvrir l'ensemble du territoire, on assimile à un IRIS chacune des communes non découpées en IRIS. » 
+ 
+On distingue quatre types d'IRIS : 
+- Type H, IRIS d'habitat : leur population se situe en général entre 1 800 et 5 000 habitants. Ils sont homogènes quant au type 
+d'habitat et leurs limites s'appuient sur les grandes coupures du tissu urbain (voies principales, voies ferrées, cours d'eau...) 
+- Type A, IRIS d'activité : ils regroupent plus de 1 000 salariés et comptent au moins deux fois plus d'emplois salariés que de 
+population résidente 
+- Type D, IRIS « divers » : il s'agit de grandes zones spécifiques peu habitées et ayant une superficie importante (parcs de 
+loisirs, zones portuaires, forêts...) 
+- Type Z : Utilisé pour les communes non découpées en IRIS. 
+ 
+EPCI  
+Définition de l’Insee : « Les établissements publics de coopération intercommunale (EPCI) sont des regroupements de 
+communes ayant pour objet l'élaboration de « projets communs de développement au sein de périmètres de solidarité ». Ils 
+sont soumis à des règles communes, homogènes et comparables à celles de collectivités locales. 
+Les informations présentées ici concernent les EPCI à fiscalité propre : 
+Communauté Urbaine (CU), Communauté d'Agglomération (CA), Communauté de Communes (CC), Syndicat d'Agglomération  
+(SA), Métropole (ME). 
+ 
+Segments clients 
+ 
+BT ≤ 36 kVA  sites raccordés au réseau Enedis en basse tension et dont la puissance de raccordement est inférieure ou égale 
+à 36 kVA 
+ 
+BT > 36 kVA  sites raccordés au réseau Enedis en basse tension et dont la puissance de raccordement est strictement 
+supérieure à 36 kVA  
+ 
+HTA  sites raccordés au réseau en haute tension dont la puissance de raccordement est strictement supérieure à 250 kW. 
+ 
+ 
+ 
+Page : 3/4 
+ENEDIS-GUI-NUM-02 
+V2 
+02/05/2017  
+ 
+ 
+Site d’injection ou de production 
+Personne  physique ou morale ayant signé un contrat d’accès au réseau en injection. 
+ 
+Clés de lecture du jeu de données 
+ 
+Périmètre géographique 
+Le jeu de données contient les données au périmètre Enedis. 
+ 
+Mailles géographiques  
+Pour chaque année A d’historique des données, la maille EPCI indiquée est celle du Code officiel géographique de l’INSEE de 
+l’année A.   
+Les régions représentées sont les régions telles que définies au 1er janvier 2016. 
+La référence IRIS utilisée est celle publiée sur le site de l’IGN au 1er janvier 2016. 
+ 
+Dans le jeu de données, certains IRIS ont un code INSEE finissant par les caractères XXXX. Il s’agit d’IRIS fictifs qui contiennent 
+les données des sites que l’on n’a pas pu rattacher à leurs IRIS respectifs. Ces IRIS fictifs ne sont pas représentés sur la carte. 
+ 
+Dans le jeu de données, certaines mailles IRIS sont rattachées à un  EPCI dont le code INSEE est ZZZZZZZZZ. Il s’agit de mailles 
+IRIS de communes qui ne sont rattachées à aucun EPCI.  
+ 
+Champs du jeu de données 
+Lorsque sur une maille géographique donnée il n’y a pas de site de production, on indique 0 dans les champs nombre de sites 
+et énergie produite annuelle. Sur la carte, la zone est gris clair avec la mention « absence de sites ». 
+Lorsque sur une maille géographique donnée, les informations sont confidentielles, il n’y a aucune valeur dans les champs 
+nombre de sites et énergie produite annuelle. Sur la carte, la zone est gris sombre avec la mention « Secret statistique ». 
+ 
+Energie annuelle totale  
+Pour une maille géographique donnée, l’énergie annuelle totale correspond au volume d’électricité produite sur une année 
+par l’ensemble des sites de la filière et du segment clients, sur la maille géographique. 
+ 
+ 
+Méthodologie de calcul des données de production annuelle d’électricité et du nombre de sites sur le 
+réseau Enedis 
+ 
+ 
+ Calcul des énergies annuelles 
+Le calcul des énergies annuelles s’effectue de la même façon que sont construits les bilans électriques dans le cadre de la 
+Reconstitution des flux pour le processus RecoTemp décrite dans les règles du dispositif de Responsable d’Equilibre. 
+Il s’effectue pour les clients profilés en quatre étapes : 
+ 
+1. Les facteurs d’usages de chaque client déjà calculés pour les bilans RecoTemp sont utilisés. Il s’agit de la puissance 
+annuelle calculée pour chaque poste horosaisonnier à l’aide des valeurs de production mesurées entre deux relevés. 
+2. Lorsqu’un facteur d’usage est calculé sur une période comprise à l’intérieur d’une année civile, il est comptabilisé 
+comme  énergie « mesurée » du client, au sens de l’arrêté du 18 juillet 2016. 
+3. Lorsqu’un facteur d’usage est calculé sur une période à cheval sur deux années civiles, la répartition entre les 
+différentes années est effectuée en utilisant le profil ajusté à la température de la période (méthode appelée « au 
+prorata profilis »). Cette énergie est identifiée comme « modélisée » et agrégée à l’énergie « mesurée » pour 
+représenter l’énergie annuelle du site. 
+4. Lorsque, pour une année civile donnée, le facteur d’usage le plus récent ne couvre pas la fin de l’année civile (cela 
+peut arriver si la production du client n’a pas pu être relevée lors du dernier semestre), nous utilisons la dernière 
+valeur connue. Cette énergie est comptée comme « modélisée ». Elle est prise en compte dans la production annuelle 
+du site. 
+ 
+ 
+ 
+Page : 4/4 
+ENEDIS-GUI-NUM-02 
+V2 
+02/05/2017  
+ 
+ 
+Pour les clients traités en courbe de charge dans la Reconstitution des flux, l’énergie annuelle est obtenue en calculant 
+l’intégrale de la courbe de charge sur l’année civile.  
+ 
+ Protection des données 
+Conformément à la réglementation, les données sont protégées de façon à préserver leur confidentialité.  
+Pour les sites de puissance de raccordement ≤ 36 kVA, seuls sont diffusés le nombre de sites et la production des agrégats 
+contenant 10 sites ou plus. 
+Les données de production de certains IRIS sont donc masquées. Si à la maille EPCI ou région, pour une filière et un segment 
+clients donnés, l’agrégat formé par les sites appartenant à ces mailles IRIS masquées contient 10 sites ou plus, alors le nombre 
+de sites et l’énergie totale produite sont affichés à ces mailles. Sinon, on n’affiche ni le nombre de sites, ni l’énergie totale 
+produite. 
+ 
+Le secret induit est également protégé : les agrégats sont masqués si leur diffusion permet par recoupement avec les agrégats 
+à maille IRIS de retrouver une énergie produite ou un nombre de sites secrétisés. 
+ 
+Les données des segments clients BT > 36 et HTA ne sont plus protégées pour préserver le secret des affaires. La règle 
+consistant pour une maille géographique, un segment clients et une filière donnés, de n’afficher les données que si l’agrégat 
+contient 3 sites ou plus et si aucun des sites de l’agrégat n’a une production électrique annuelle représentant plus de 80% de 
+la production électrique annuelle de l’agrégat n’est plus mise en œuvre. 

@@ -1,0 +1,944 @@
+A Simple Approa h to Ordinal Classi ation
+Eibe Frank and Mark Hall
+Department of Computer S ien e
+University of Waikato
+Hamilton, New Zealand
+
+feibe,
+
+mhallg s.waikato.a .nz
+
+Ma hine learning methods for lassi ation problems ommonly assume that the lass values are unordered. However, in many
+pra ti al appli ations the lass values do exhibit a natural order|for
+example, when learning how to grade. The standard approa h to ordinal
+lassi ation onverts the lass value into a numeri quantity and applies a regression learner to the transformed data, translating the output
+ba k into a dis rete lass value in a post-pro essing step. A disadvantage of this method is that it an only be applied in onjun tion with a
+regression s heme.
+In this paper we present a simple method that enables standard lassi ation algorithms to make use of ordering information in lass attributes.
+By applying it in onjun tion with a de ision tree learner we show that
+it outperforms the naive approa h, whi h treats the lass values as an
+unordered set. Compared to spe ial-purpose algorithms for ordinal lassi ation our method has the advantage that it an be applied without
+any modi ation to the underlying learning s heme.
+
+Abstra t.
+
+1 Introdu tion
+Classi ation algorithms map a set of attribute values to a ategori al target
+value, represented by a lass attribute. Pra ti al appli ations of ma hine learning
+frequently involve situations exhibiting an order among the di erent ategories
+represented by the lass attribute. However, standard lassi ation algorithms
+annot make use of this ordering information: they treat the lass attribute as a
+nominal quantity|a set of unordered values.
+Statisti ians di erentiate between four basi quantities that an be represented in an attribute, often referred to as levels of measurement [9℄. There are
+four types of measurements: nominal, ordinal, interval, and ratio quantities. The
+di eren e between nominal and ordinal quantities is that the latter exhibit an
+order among the di erent values that they an assume. An ordinal attribute
+ould, for example, represent a oarse lassi ation of the outside temperature
+represented by the values H ot, M ild, and C ool. It is lear that there is an order
+among those values and that we an write H ot > M ild > C ool.
+Interval quantities are similar to ordinal quantities in that they exhibit an
+order. They di er be ause their values are measured in xed and equal units. This
+implies that the di eren e between two values an be determined by subtra ting
+
+them. This does not make sense if the quantity is ordinal. Temperature measured
+in degrees Fahrenheit is an interval quantity. Ratio quantities additionally exhibit
+a zero point. This means that it is possible to multiply their values.
+Standard lassi ation algorithms for nominal lasses an be applied to ordinal predi tion problems by dis arding the ordering information in the lass
+attribute. However, some information is lost when this is done, information that
+an potentially improve the predi tive performan e of a lassi er.
+This paper presents a simple method that enables standard lassi ation
+algorithms to exploit the ordering information in ordinal predi tion problems.
+Empiri al results|obtained using the de ision tree learner C4.5 [7℄|show that
+it indeed improves lassi ation a ura y on unseen data. A key feature of our
+method is that it does not require any modi ation of the underlying learning
+algorithm|it is appli able as long as the lassi er produ es lass probability
+estimates.
+The method is expli itly designed for ordinal problems|in other words, for
+lassi ation tasks with ordered ategories. Standard regression te hniques for
+numeri predi tion problems an be applied when the target value represents an
+interval or ratio quantity. However, their appli ation to truly ordinal problems
+is ne essarily ad ho .
+This paper is stru tured as follows. In Se tion 2 we present our approa h
+to ordinal lassi ation. Se tion 3 ontains experimental results on a olle tion
+of ben hmark datasets, demonstrating that the predi tive a ura y of de ision
+trees an be improved by applying this method to exploit ordering information in
+the lass. Se tion 4 dis usses related work on ustom-made learning algorithms
+for ordinal problems and approa hes that use regression te hniques for ordinal
+lassi ation. Se tion 5 summarizes the ontributions made in this paper.
+
+2 Transforming the Ordinal Classi ation Problem
+Figure 1 shows in diagrammati form how our method allows a standard lassiation learner to be applied to an ordinal predi tion task. The data is from a
+tional temperature predi tion problem and has an ordinal lass attribute with
+three values (C ool, M ild and H ot). The upper part depi ts the training pro ess
+and the lower part the testing pro ess.
+A simple tri k allows the underlying learning algorithms to take advantage of
+ordered lass values. First, the data is transformed from a k - lass ordinal problem
+to k 1 binary lass problems. Figure 2 shows the pro ess of onverting an ordinal
+attribute A with ordered values V1 ; V2 ; :::; Vk into k 1 binary attributes, one
+for ea h of the original attribute's rst k 1 values. The ith binary attribute
+represents the test A > Vi .
+Training starts by deriving new datasets from the original dataset, one for
+ea h of the k 1 new binary lass attributes. In Figure 1 there are two derived datasets, the rst has a lass attribute that represents T arget > C ool and
+the se ond has a lass attribute that represents T arget > M ild. Ea h derived
+dataset ontains the same number of attributes as the original, with the same
+
+Original
+Dataset
+
+Attributes
+
+Class
+
+4.4, 3.9, ...
+4.7, 3.2, ...
+6.7, 3.1, ...
+5.8, 2.7, ...
+...
+
+Cool
+Cool
+Mild
+Hot
+...
+
+A: Target > Cool
+Derived
+Datasets
+
+B: Target > Mild
+
+Attributes
+
+Target
+
+Attributes
+
+Target
+
+4.4, 3.9, ...
+4.7, 3.2, ...
+6.7, 3.1, ...
+5.8, 2.7, ...
+...
+
+0
+0
+1
+1
+...
+
+4.4, 3.9, ...
+4.7, 3.2, ...
+6.7, 3.1, ...
+5.8, 2.7, ...
+...
+
+0
+0
+0
+1
+...
+
+Discrete class learner
+Classifiers
+
+New
+Instance
+
+Discrete class learner
+
+Pr(Target > Cool | X)
+
+Pr(Target > Mild | X)
+
+Attributes
+
+Target
+
+5.7, 3.0, ... ?
+
+Pr(Target > Mild | 5.7, 3, ..) = 0.7
+
+1 - Pr(Target > Cool | 5.7, 3, ..) = 0.05
+
+Pr(Target > Cool | 5.7, 3, ..)
+Pr(Target > Mild | 5.7, 3, ...)
+=
+0.25
+
+Predicted
+Class
+
+Fig. 1.
+
+Hot
+
+How standard lassi ation algorithms are applied to ordinal predi tion
+
+attribute values for ea h instan e|apart from the lass attribute. In the next
+step the lassi ation algorithm is applied to generate a model for ea h of the
+new datasets.
+To predi t the lass value of an unseen instan e we need to estimate the
+probabilities of the k original ordinal lasses using our k 1 models. Estimation of the probability for the rst and last ordinal lass value depends on a
+single lassi er. The probability of the rst ordinal value (C ool) is given by
+1 P r(T arget > C ool). Similarly, the last ordinal value (H ot) is omputed from
+P r (T arget > M ild). For
+lass values in the middle of the range|in this ase
+there is only one (M ild)|the probability depends on a pair of lassi ers. In this
+
+A*
+
+V
+1
+
+V
+2
+
+V
+3
+
+V
+
+4
+
+A1*
+
+{V }
+1
+
+{V , V , V }
+2 3 4
+
+A*
+2
+
+{V , V }
+1 2
+
+{V , V }
+3 4
+
+A*
+3
+
+{V , V , V }
+1 2 3
+Fig. 2.
+
+tributes
+
+{V }
+4
+
+Transformation of an ordinal attribute with four values into three binary at-
+
+example it is given by
+for lass values Vi ,
+
+(
+
+P r T arget > C ool
+
+( ) = 1 P r(T arget > V1 )
+( ) = P r(T arget > Vi 1 )
+P r (Vk ) = P r (T arge > Vk 1 )
+P r V1
+P r Vi
+
+)
+
+(
+
+)). In general,
+
+P r T arget > M ild
+
+(
+
+P r T arget > Vi
+
+) ;1 < i < k
+
+At predi tion time, an instan e of unknown lass is pro essed by ea h of
+the k 1 lassi ers and the probability of ea h of the k ordinal lass values
+is al ulated using the above method. The lass with maximum probability is
+assigned to the instan e.
+
+3 Experimental Results
+To test the hypothesis that the above method improves the generalization performan e of a standard lassi ation algorithm on ordinal predi tion problems, we
+performed experiments on arti ial and real-world datasets in onjun tion with
+
+Table 1.
+
+Datasets and their hara teristi s
+
+Dataset
+Instan es Attributes Numeri Nominal
+Abalone
+4177
+9
+7
+2
+Ailerons
+13750
+41
+40
+1
+Delta Ailerons
+7129
+6
+5
+1
+Elevators
+16599
+19
+18
+1
+Delta Elevators
+9517
+7
+6
+1
+2D Planes
+40768
+11
+10
+1
+Pole Tele omm
+15000
+49
+48
+1
+Friedman Arti ial
+40768
+11
+10
+1
+MV Arti ial
+40768
+11
+7
+4
+Kinemati s of Robot Arm
+8192
+9
+8
+1
+Computer A tivity (1)
+8192
+13
+12
+1
+Computer A tivity (2)
+8192
+22
+21
+1
+Census Domain (1)
+22784
+9
+8
+1
+Census Domain (2)
+22784
+17
+16
+1
+Auto MPG
+398
+8
+4
+4
+Auto Pri e
+159
+16
+15
+1
+Boston Housing
+506
+14
+12
+2
+Diabetes
+43
+3
+2
+1
+Pyrimidines
+74
+28
+27
+1
+Triazines
+186
+61
+60
+1
+Ma hine CPU
+209
+7
+6
+1
+Servo
+167
+5
+0
+5
+Wis onsin Breast Can er
+194
+33
+32
+1
+Pumadyn Domain (1)
+8192
+9
+8
+1
+Pumadyn Domain (2)
+8192
+33
+32
+1
+Bank Domain (1)
+8192
+9
+8
+1
+Bank Domain (2)
+8192
+33
+32
+1
+California Housing
+20640
+9
+8
+1
+Sto ks Domain
+950
+10
+9
+1
+
+the C4.5 de ision tree learner [7℄. We used a olle tion of ben hmark datasets
+representing numeri predi tion problems and onverted the numeri target values into ordinal quantities using equal-frequen y binning. This unsupervised
+dis retization method divides the range of observed values into a given number
+of intervals so that the number of instan es in ea h interval is approximately
+onstant. The resulting lass values are ordered, representing variable-size intervals of the original numeri quantity. This method was hosen be ause of the
+la k of ben hmark datasets involving ordinal lass values.
+The datasets were taken from a publi ly available olle tion of regression
+problems [8℄. The properties of these 29 datasets are shown in Table 1. For ea h
+dataset we reated three di erent versions by dis retizing the target value into
+three, ve, and ten intervals respe tively. This was done to evaluate the in uen e
+of di erent numbers of lasses on the s hemes' relative performan e.
+
+All a ura y estimates were obtained by averaging the results from 10 separate runs of strati ed 10-fold ross-validation. In other words, ea h s heme was
+applied 100 times to generate an estimate for a parti ular dataset. Throughout,
+we speak of two results for a dataset as being \signi antly di erent" if the
+di eren e is statisti ally signi ant at the 1% level a ording to a paired twosided t-test, ea h pair of data points onsisting of the estimates obtained in one
+ten-fold ross-validation run for the two learning s hemes being ompared. A
+signi ant di eren e in this sense means that, with high probability, a omplete
+ross-validation [4℄ on the dataset would result in a di eren e in a ura y.1
+Table 2 shows the a ura y estimates for the de ision tree learner C4.52
+in the ve- lass situation, applied (a) without any modi ation of the input
+and output (C4.5), (b) in onjun tion with the ordinal lassi ation method
+presented in Se tion 2 (C45-ORD), and ( ) using the standard one-per- lass
+method (see, e.g., [9℄) for applying a two- lass learner to a multi- lass problem
+(C4.5-1PC). We have in luded C4.5-1PC in the omparison to as ertain whether
+overall di eren es in performan e are due to the fa t that we transform the multilass problem into several two- lass problems. Standard deviations are also shown
+(based on the 10 a ura y estimates obtained from the 10 ross-validation runs).
+Results for C4.5 and C4.5-1PC are marked with Æ if they show signi ant
+improvement over the orresponding results for C4.5-ORD, and with  if they
+show signi ant degradation. Table 3 shows how the di erent methods ompare
+with ea h other. Ea h entry indi ates the number of datasets for whi h the
+method asso iated with its olumn is (signi antly) more a urate than the
+method asso iated with its row.
+The results show that the ordinal lassi ation method frequently improves
+performan e ompared to plain C4.5. On 18 datasets, C4.5-ORD is signi antly
+more a urate than C4.5, and signi antly worse on none. The results also show
+that the performan e di eren e is not due to the fa t that ea h learning problem
+has been onverted into several two- lass problems: C45-ORD is signi antly
+more a urate than C4.5-1PC on 16 datasets, and signi antly worse on only
+four.
+A sign test on rms the hypothesis that the ordinal lassi ation pro edure
+from Se tion 2 improves performan e. Note that the results for the two di erent
+versions of the omputer a tivity, ensus domain, pumadyn domain, and bank
+domain datasets are highly orrelated. Consequently we ignore the smaller version of ea h of these four datasets when we perform the sign test (i.e. we only
+onsider version number 2 in ea h ase). If this is done, C4.5-ORD wins against
+plain C4.5 on 19 datasets and looses on only four (not taking the signi an e of
+the individual di eren es into a ount). A ording to a two-sided sign test this
+ratio is signi ant at the 0.005%-level. The win/loss-ratio between C4.5-ORD
+and C4.5-1PC is 18/6 and signi ant at the 0.05%-level.
+1
+2
+
+A omplete ross-validation is performed by averaging a ross all possible rossvalidation runs that an be performed for a parti ular dataset.
+We used the implementation of C4.5 that is part of the WEKA ma hine learning
+workben h.
+
+Experimental results for target value dis retized into ve bins: per entage of
+orre t lassi ations, and standard deviation
+
+Table 2.
+
+Dataset
+C4.5-ORD
+C4.5
+C4.5-1PC
+Abalone
+48.080.48
+46.340.73  49.550.65 Æ
+Ailerons
+59.240.30
+56.970.35  55.580.34 
+Delta Ailerons
+56.000.33
+55.540.50  56.770.15 Æ
+Elevators
+50.340.28
+47.760.29  50.720.33 Æ
+Delta Elevators
+50.010.38
+47.630.42  50.340.29
+2D Planes
+75.370.11
+75.370.06
+75.290.07
+Pole Tele om
+95.050.12
+95.050.10
+94.940.07
+Friedman Arti ial
+66.490.18
+64.830.18  64.010.13 
+MV Arti ial
+99.190.04
+99.200.04
+99.190.02
+Kinemati s of Robot Arm 47.230.39
+43.690.41  42.580.70 
+Computer A tivity (1)
+65.930.40
+63.750.32  65.030.32 
+Computer A tivity (2)
+68.690.47
+66.800.47  66.760.44 
+Census Domain (1)
+53.300.20
+50.200.36  51.460.34 
+Census Domain (2)
+51.510.26
+48.960.33  50.970.21 
+Auto MPG
+59.740.98
+59.581.86
+59.461.25
+Auto Pri e
+66.802.20
+62.392.71  63.501.43 
+Boston Housing
+61.011.39
+59.341.49  59.701.65
+Diabetes
+28.952.87
+26.555.21
+33.80 2.63 Æ
+Pyrimidines
+43.272.85
+42.273.51
+42.682.78
+Triazines
+40.032.51
+38.903.07
+37.142.40 
+Ma hine CPU
+58.101.32
+56.782.78
+56.622.43
+Servo
+52.631.57
+55.162.09
+49.821.65 
+Wis onsin Breast Can er 21.461.89
+22.923.48
+21.711.40
+Pumadyn Domain (1)
+50.010.33
+46.040.43  48.280.34 
+Pumadyn Domain (2)
+65.730.33
+62.670.42  63.510.37 
+Bank Domain (1)
+74.040.24
+73.140.31  73.270.36 
+Bank Domain (2)
+38.670.52
+37.370.59  36.010.22 
+California Housing
+64.780.23
+63.300.18  64.360.18 
+Sto ks Domain
+86.850.67
+87.050.88
+85.190.53 
+Æ,  statisti ally signi ant improvement or degradation
+
+Table 3. Pair-wise omparison for target value dis retized into ve bins: number indi ates how often method in olumn (signi antly) outperforms method in row
+
+C4.5-ORD
+C4.5
+C4.5-1PC
+
+C4.5-ORD C4.5 C4.5-1PC
+{
+4 (0) 6 (4)
+23 (18)
+{
+15 (11)
+22 (16) 14 (7)
+{
+
+An interesting question is whether the di eren e in a ura y depends on the
+number of lass values in the problem. A reasonable hypothesis is that the performan e di eren e in reases as the number of lasses in reases. To investigate this
+we also ran the three s hemes on the same datasets with di erent dis retizations
+of the target value.
+Tables 4 and 5 summarize the results for the three-bin dis retization. They
+show that there is relatively little to be gained by exploiting the ordering information in the lass. Compared to C4.5, C4.5-ORD is signi antly more a urate
+on 15 datasets, and signi antly worse on none. However, C4.5-ORD does not
+perform markedly better than C4.5-1PC: it is signi antly more a urate on
+10 datasets, and signi antly worse on seven. It is interesting to see that the
+one-per- lass en oding outperforms plain C4.5 on these three- lass datasets.
+If the signi an e of the individual di eren es is not taken into a ount and
+ignoring the smaller version of ea h pair of datasets from the same domain,
+C4.5-ORD wins against C4.5 on 21 datasets, and looses on three. This di eren e
+is statisti ally signi ant a ording to a two-sided sign test: the orresponding
+p-value is smaller than 0.0002. However, ompared to C4.5-1PC, the win/lossratio for C4.5-ORD is 15/9, with a orresponding p-value of 0.1537. Thus there
+is only very weak eviden e that the ordinal lassi ation method improves on
+the standard one-per- lass en oding.
+For the ten-bin ase we expe t a more signi ant di eren e, in parti ular
+when ompared to the one-per- lass method. This is on rmed in the experimental results summarized in Tables 6 and 7. The di eren e in performan e between
+C4.5-ORD and C4.5 remains high but in reases only slightly when moving from
+ve to ten bins. C4.5-ORD outperforms C4.5 on all but six of the datasets. It
+is signi antly more a urate on 22 datasets, and signi antly less a urate on
+only two. Compared to C4.5-1PC, C4.5-ORD is signi antly more a urate on
+25 datasets, and signi antly worse on two. This is a marked improvement over
+the ve-bin ase and suggests that ordering information be omes more useful as
+the number of lasses in reases.
+Not onsidering the signi an e of individual di eren es and ignoring the
+smaller version of ea h pair of datasets from the same domain, C4.5-ORD wins
+against C4.5 on 19 datasets, and looses on six. A ording to a two-sided sign
+test this ratio is signi ant at the 0.01%-level. Thus there is strong eviden e that
+C4.5-ORD outperforms C4.5 on a olle tion of datasets of this type. Compared
+to C4.5-1PC, the win/loss-ratio for C4.5-ORD is 22/3, with a orresponding
+p-value that is smaller than 0.0001. Consequently there is very strong eviden e
+that the ordinal lassi ation method improves on the standard one-per- lass
+en oding.
+
+4 Related Work
+The ordinal lassi ation method dis ussed in this paper is appli able in onjun tion with any base learner that an output lass probability estimates. Kramer
+et al. [5℄ investigate the use of a learning algorithm for regression tasks|more
+
+Experimental results for target value dis retized into three bins: per entage
+of orre t lassi ations, and standard deviation
+
+Table 4.
+
+Dataset
+C4.5-ORD
+C4.5
+C4.5-1PC
+Abalone
+66.040.29
+63.900.24  65.910.34
+Ailerons
+75.370.31
+74.780.37  73.790.34 
+Delta Ailerons
+80.520.25
+80.340.17
+80.900.17 Æ
+Elevators
+64.450.18
+62.220.25  63.630.36 
+Delta Elevators
+70.870.29
+69.890.26  70.730.27
+2D Planes
+86.610.04
+86.610.05
+86.520.09 
+Pole Tele omm
+95.900.12
+95.640.10  95.580.10 
+Friedman Arti ial
+80.780.09
+80.230.14  80.300.18 
+MV Arti ial
+99.510.02
+99.530.02
+99.550.03 Æ
+Kinemati s of Robot Arm 64.430.41
+63.760.24  64.880.38 Æ
+Computer A tivity (1)
+79.050.39
+78.440.43  78.380.31 
+Computer A tivity (2)
+81.030.42
+80.760.31
+80.210.40 
+Census Domain (1)
+70.490.18
+69.580.27  70.950.18 Æ
+Census Domain (2)
+69.540.20
+68.190.28  69.610.23
+Auto MPG
+78.811.26
+78.121.14
+79.161.32
+Auto Pri e
+86.251.38
+85.361.60
+85.871.27
+Boston Housing
+75.521.07
+74.831.72
+74.791.18
+Diabetes
+54.452.61
+51.003.91
+54.452.61
+Pyrimidines
+56.893.98
+50.112.95  55.133.31
+Triazines
+54.423.24
+54.183.20
+54.112.84
+Ma hine CPU
+73.882.39
+71.852.44
+74.262.77
+Servo
+77.241.16
+75.561.26  79.221.27 Æ
+Wis onsin Breast Can er 35.872.28
+37.403.23
+35.712.11
+Pumadyn Domain (1)
+66.810.45
+66.020.28  67.370.32 Æ
+Pumadyn Domain (2)
+78.840.15
+77.650.41  77.640.30 
+Bank Domain (1)
+85.890.28
+86.020.28
+85.610.11 
+Bank Domain (2)
+57.160.45
+55.840.38  53.940.26 
+California Housing
+78.940.11
+79.020.17
+79.420.16 Æ
+Sto ks Domain
+91.740.53
+91.240.53
+91.770.45
+Æ,  statisti ally signi ant improvement or degradation
+
+Table 5. Pair-wise omparison for target value dis retized into three bins: number
+indi ates how often method in olumn (signi antly) outperforms method in row
+
+C4.5-ORD
+C4.5
+C4.5-1PC
+
+C4.5-ORD C4.5 C4.5-1PC
+{
+4 (0) 11 (7)
+24 (15)
+{
+18 (11)
+17 (10) 11 (4)
+{
+
+Experimental results for target value dis retized into ten bins: per entage of
+orre t lassi ations, and standard deviation
+
+Table 6.
+
+Dataset
+C4.5-ORD
+C4.5
+C4.5-1PC
+Abalone
+29.440.36
+26.680.61  27.430.58 
+Ailerons
+39.360.32
+36.640.37  35.760.32 
+Delta Ailerons
+43.390.35
+41.310.61  43.300.30
+Elevators
+31.390.33
+28.580.35  29.770.38 
+Delta Elevators
+40.600.25
+36.900.44  41.440.23 Æ
+2D Planes
+54.930.14
+53.000.14  51.250.32 
+Pole Tele om
+91.180.09
+90.850.14  89.340.15 
+Friedman Arti ial
+44.520.19
+41.060.10  32.790.38 
+MV Arti ial
+98.110.03
+98.170.05
+97.360.06 
+Kinemati s of Robot Arm 25.950.38
+24.390.28  20.370.38 
+Computer A tivity (1)
+45.540.37
+42.200.46  42.120.34 
+Computer A tivity (2)
+48.760.55
+45.580.65  45.600.48 
+Census Domain (1)
+33.040.17
+30.500.23  29.000.21 
+Census Domain (2)
+31.680.28
+29.330.22  28.950.19 
+Auto MPG
+36.431.27
+39.631.70 Æ 24.651.09 
+Auto Pri e
+48.271.89
+36.822.40  34.373.01 
+Boston Housing
+42.401.05
+38.611.25  35.931.65 
+Diabetes
+14.853.27
+23.003.12 Æ 19.802.06 Æ
+Pyrimidines
+19.392.95
+23.892.69
+15.931.83 
+Triazines
+20.301.49
+16.501.94  12.221.74 
+Ma hine CPU
+36.542.46
+36.231.48
+30.591.93 
+Servo
+34.570.98
+34.601.47
+13.180.03 
+Wis onsin Breast Can er 10.631.76
+11.243.15
+11.331.24
+Pumadyn Domain (1)
+26.460.32
+23.690.61  16.600.43 
+Pumadyn Domain (2)
+45.770.46
+41.870.42  41.210.54 
+Bank Domain (1)
+52.750.37
+49.570.44  43.580.82 
+Bank Domain (2)
+25.510.42
+24.200.33  24.060.39 
+California Housing
+44.680.28
+42.670.32  39.470.27 
+Sto ks Domain
+74.841.32
+72.690.76  72.090.70 
+Æ,  statisti ally signi ant improvement or degradation
+
+Pair-wise omparison for target value dis retized into ten bins: number indiates how often method in olumn (signi antly) outperforms method in row
+
+Table 7.
+
+C4.5-ORD
+C4.5
+C4.5-1PC
+
+C4.5-ORD C4.5 C4.5-1PC
+{
+6 (2)
+3 (2)
+23 (22)
+{
+6 (3)
+26 (25) 23 (17)
+{
+
+spe i ally, a regression tree learner|to solve ordinal lassi ation problems. In
+this ase ea h lass needs to be mapped to a numeri value. Kramer et al. [5℄
+ompare several di erent methods for doing this. However, if the lass attribute
+represents a truly ordinal quantity|whi h, by de nition, annot be represented
+as a number in a meaningful way|there is no prin ipled way of devising an
+appropriate mapping and this pro edure is ne essarily ad ho .
+Herbri h et al. [3℄ propose a strategy for ordinal lassi ation that is based on
+a loss fun tion between pairs of true ranks and predi ted ranks. They present a
+orresponding algorithm similar to a support ve tor ma hine, and mention that
+their approa h an be extended to other types of linear lassi ers.
+Potharst and Bio h [6℄ present a de ision tree learning algorithm for monotone learning problems. In a monotone learning problem both the input attributes and the lass attribute are assumed to be ordered. This is di erent from
+the setting onsidered in this paper be ause we do not assume that the input is
+ordered.
+Although ma hine learning algorithms for ordinal lassi ation are rare, there
+are many statisti al approa hes to this problem. However, they all rely on spe i
+distributional assumptions for modeling the lass variable and also assume a
+sto hasti ordering of the input spa e [3℄.
+The te hnique of generating binary \dummy" attributes to repla e an ordered
+attribute an also be applied to the attributes making up the input spa e. Frank
+and Witten [2℄ show that this often improves performan e ompared to treating
+ordered attributes as nominal quantities. In ases where both the input and the
+output are ordered, this te hnique an be applied in addition to the method
+dis ussed in this paper to obtain further performan e improvements.
+The method presented in this paper is also related to the use of errororre ting output odes for (unordered) multi- lass problems [1℄. Instead of using
+error- orre ting bit ve tors to represent ea h lass, we use bit ve tors that re e t
+the ordering of the lass values. As opposed to hoosing the bit ve tor with the
+losest Hamming distan e when making a predi tion, our method sele ts the
+ve tor whi h orresponds to the largest estimated lass probability ( omputed
+a ording to the pro edure dis ussed in Se tion 2).
+
+5 Con lusions
+This paper presents a simple method that enables standard lassi ation algorithms to make use of ordering information in ordinal lass attributes. The
+method onverts the original ordinal lass problem into a series of binary lass
+problems that en ode the ordering of the original lasses. Empiri al results based
+on C4.5 show that this pro edure is signi antly more a urate than plain C4.5,
+and C4.5 used in onjun tion with the standard one-per- lass method. They also
+show that the performan e gap in reases with the number of lasses. Our ndings demonstrate that the improvement in performan e is a result of exploiting
+ordering information and not simply as a side e e t of transforming the problem
+into a series of binary- lass problems.
+
+Referen es
+1. T. G. Dietteri h and G. Bakiri. Solving multi lass learning problems via errororre ting output odes. Journal of Arti ial Intelligen e Resear h, 2:263{286, 1995.
+2. E. Frank and I. H. Witten. Making better use of global dis retization. In Pro eedings of the Sixteenth International Conferen e on Ma hine Learning, Bled, Slovenia,
+1999. Morgan Kaufmann.
+3. R. Herbri h, T. Graepel, and K. Obermayer. Regression models for ordinal data: A
+ma hine learning approa h. Te hni al report, TU Berlin, 1999.
+4. R. Kohavi. Wrappers for Performan e Enhan ement and Oblivious De ision Graphs.
+PhD thesis, Stanford University, Department of Computer S ien e, 1995.
+5. S. Kramer, G. Widmer, B. Pfahringer, and M. DeGroeve. Predi tion of ordinal
+lasses using regression trees. Fundamenta Informati ae, 2001.
+6. R. Potharst and J.C. Bio h. De ision trees for ordinal lassi ation. Intelligent
+Data Analysis, 4(2):97{112, 2000.
+7. R. Quinlan. C4.5: Programs for Ma hine Learning. Morgan Kaufmann, San Franis o, 1993.
+8. L. Torgo. Regression Data Sets. University of Porto, Fa ulty of E onomi s, Porto,
+Portugal, 2001. [http://www.n .up.pt/ltorgo/Regression/DataSets.html℄.
+9. I. H. Witten and E. Frank. Data Mining: Pra ti al Ma hine Learning Tools and
+Te hniques with Java Implemenations. Morgan Kaufmann, San Fran is o, 2000.
+
+

@@ -1,0 +1,1298 @@
+New Regularized Algorithms for Transductive Learning
+Partha Pratim Talukdar and Koby Crammer
+Computer & Information Science Department
+University of Pennsylvania
+Philadelphia, PA 19104
+{partha,crammer}@cis.upenn.edu
+
+Abstract. We propose a new graph-based label propagation algorithm for transductive learning. Each example is associated with a vertex in an undirected graph
+and a weighted edge between two vertices represents similarity between the two
+corresponding example. We build on Adsorption, a recently proposed algorithm
+and analyze its properties. We then state our learning algorithm as a convex
+optimization problem over multi-label assignments and derive an efficient algorithm to solve this problem. We state the conditions under which our algorithm is
+guaranteed to converge. We provide experimental evidence on various real-world
+datasets demonstrating the effectiveness of our algorithm over other algorithms
+for such problems. We also show that our algorithm can be extended to incorporate additional prior information, and demonstrate it with classifying data where
+the labels are not mutually exclusive.
+Key words: label propagation, transductive learning, graph based semi-supervised
+learning.
+
+1
+
+Introduction
+
+Supervised machine learning methods have achieved considerable success in a wide
+variety of domains ranging from Natural Language Processing, Speech Recognition to
+Bioinformatics. Unfortunately, preparing labeled data for such methods is often expensive and time consuming, while unlabeled data are widely available in many cases. This
+was the major motivation that led to the development of semi-supervised algorithms
+which learn from limited amounts of labeled data and vast amounts of freely available
+unannotated data.
+Recently, graph based semi-supervised algorithms have achieved considerable attention [2, 7, 11, 14, 17]. Such methods represent instances as vertices in a graph with
+edges between vertices encoding similarities between them. Graph-based semi-supervised
+algorithms often propagate the label information from the few labeled vertices to the
+entire graph. Most of the algorithms tradeoff between accuracy (initially labeled nodes
+should retain those labels, relaxations allowed by some methods) with smoothness (adjacent vertices in the graph should be assigned similar labels). Most algorithms only
+output label information to the unlabeled data in a transductive setting, while some
+algorithms are designed for the semi-supervised framework and build a classification
+model which can be applied to out-of-sample examples.
+
+Adsorption [1] is one such recently proposed graph based semi-supervised algorithm which has been successfully used for different tasks, such as recommending
+YouTube videos to users [1] and large scale assignment of semantic classes to entities within Information Extraction [13]. Adsorption has many desirable properties: it
+can perform multiclass classification, it can be parallelized and hence can be scaled to
+handle large data sets which is of particular importance for semi-supervised algorithms.
+Even though Adsorption works well in practice, to the best of our knowledge it has
+never been analyzed before and hence our understanding of it is limited. Hoping to fill
+this gap, we make the following contributions in this paper:
+– We analyze the Adsorption algorithm [1] and show that there does not exist an
+objective function whose local optimization would be the output of the Adsorption
+algorithm.
+– Motivated by this negative result, we propose a new graph based semi-supervised
+algorithm (Modified Adsorption, MAD), which shares Adsorption’s desirable properties, yet with some important differences.
+– We state the learning problem as an optimization problem and develop efficient
+(iterative) methods to solve it. We also list the conditions under which the optimization algorithm – MAD – is guaranteed to converge.
+– The transition to an optimization based learning algorithm provides a flexible and
+general framework that enables us to specify a variety requirements. We demonstrate this framework using data with non-mutually exclusive labels, resulting in
+the Modified Adsorption for Dependent Labels (MADDL, pronounced medal) algorithm.
+– We provide experimental evidence demonstrating the effectiveness of our proposed
+algorithm on various real world datasets.
+
+2
+
+Adsorption Algorithm
+
+Adsorption [1] is a general algorithmic framework for transductive learning where the
+learner is often given a small set of labeled examples and a very large set of unlabeled
+examples. The goal is to label all the unlabeled examples, and possibly under the assumption of label-noise, also to relabel the labeled examples.
+As many other related algorithms [17, 12, 5], Adsorption assumes that the learning
+problem is given in a graph form, where examples or instances are represented as nodes
+or vertices and edges code similarity between examples. Some of the nodes are associated with a pre-specified label, which is correct in the noise-free case, or can be subject
+to label-noise. Additional information can be given in the form of weights over the labels. Adsorption propagates label-information from the labeled examples to the entire
+set of vertices via the edges. The labeling is represented using a non-negative score for
+each label, with high score for some label indicating high-association of a vertex (or its
+corresponding instance) with that label. If the scores are additively normalized they can
+be thought of as a conditional distribution over the labels given the node (or example)
+identity.
+More formally, Adsorption is given an undirected graph G = (V, E, W ), where a
+node v ∈ V corresponds to an example, an edge e = (a, b) ∈ V × V indicates that the
+
+label of the two vertices a, b ∈ V should be similar and the weight Wab ∈ R+ reflects
+the strength of this similarity.
+We denote the total number of examples or vertices by n = |V | , by nl the number
+of examples for which we have prior knowledge of their label and by nu the number of
+unlabeled examples to be labeled. Clearly nl + nu = n. Let L be the set of possible
+labels, their total number is denoted by m = |L| and without loss of generality we
+assume that the possible labels are L = {1 . . . m}. Each instance v ∈ V is associated
+with two row-vectors Yv , Ŷv ∈ Rm
++ . The lth element of the vector Yv encodes the
+prior knowledge for vertex v. The higher the value of Yvl the stronger we a-priori
+believe that the label of v should be l ∈ L and a value of zero Yvl = 0 indicates
+no prior about the label l for vertex v. Unlabeled examples have all their elements set
+to zero, that is Yvl = 0 for l = 1 . . . m. The second vector Ŷv ∈ Rm
++ is the output
+of the algorithm, using similar semantics as Yv . For example, a high value of Ŷvl
+indicates that the algorithm believes that the vertex v should have the label l. We denote
+by Y, Ŷ ∈ Rn×m
+the matrices whose rows are Yv and Ŷv respectively. Finally, we
++
+denote by 0d the all-zeros row vector of dimension d.
+2.1
+
+Random-Walk View
+
+The Adsorption algorithm can be viewed as a controlled random walk over the graph
+G. The control is formalized via three possible actions: inject, continue and
+cont abnd
+≥
+, pv
+abandon (denoted by inj, cont, abnd) with pre-defined probabilities pinj
+v , pv
+abnd
+cont
+inj
+= 1. To label any
+0 per vertex v ∈ V . Clearly their sum is unit: pv + pv + pv
+vertex v ∈ V (either labeled or unlabeled) we initiate a random-walk starting at v facing three options: with probability pinj
+v the random-walk stops and return (i.e. inject)
+the pre-defined vector information Yv . We constrain pinj
+= 0 for unlabeled vertices
+v
+the random-walk abandons the labeling process and
+v. Second, with probability pabnd
+v
+the random-walk continues
+return the all-zeros vector 0m . Third, with probability pcont
+v
+to one of v’s neighbors v 0 with probability proportional to Wv0 v ≥ 0. Note that by definition Wv0 v = 0 if (v, v 0 ) ∈
+/ E. We summarize the above process with the following
+set of equations. The transition probabilities are,
+
+Wv 0 v
+0
+
+ X W (v , v) ∈ E
+uv
+Pr [v 0 |v] =
+.
+(1)
+u : (u,v)∈E
+
+
+0
+otherwise
+The (expected) score Ŷv for node v ∈ V is given by,
+X
+cont
+Ŷv = pinj
+×
+Pr [v 0 |v] Ŷv0 + pabnd
+× 0m .
+v × Yv + p v
+v
+
+(2)
+
+v 0 : (v 0 ,v)∈E
+
+2.2
+
+Averaging View
+
+For this view we add a designated symbol called the dummy label denoted by ν ∈
+/ L.
+This additional label explicitly encodes ignorance about the correct label and it means
+that a dummy label can be used instead. Explicitly, we add an additional column to all
+
+Algorithm 1 Adsorption Algorithm
+Input:
+- Graph:
+G = (V, E, W )
+- Prior labeling: Yv ∈ Rm+1 for v ∈ V
+cont
+- Probabilities: pinj
+, pabnd
+for v ∈ V
+v , pv
+v
+Output:
+- Label Scores: Ŷv for v ∈ V
+1: Ŷv ← Yv for v ∈ V {Initialization}
+2:
+3: repeat X
+Wuv Ŷu
+u
+X
+4:
+Dv ←
+for v ∈ V
+Wuv
+u
+
+5:
+for all v ∈ V do
+cont
+6:
+Ŷv ← pinj
+× Dv + pabnd
+×r
+v × Yv + pv
+v
+7:
+end for
+8: until convergence
+
+n×(m+1)
+
+. We
+the vectors defined above, and have that Yv , Ŷv ∈ Rm+1
+and Y, Ŷ ∈ R+
++
+set Yvν = 0, that is, a-priori no vertex is associated with the dummy label, and replace
+where rl = 0 for l 6= ν and rν = 1. In
+the zero vector 0m with the vector r ∈ Rm+1
++
+words, if the random-walk is abandoned, then the corresponding labeling vector is zero
+for all true labels in L, and an arbitrary value of unit for the dummy label ν. This way,
+there is always positive score for at least one label, the ones in L or the dummy label.
+The averaging view then defines a set of fixed-point equations to update the predicted labels. A summary of the equations appears in Algorithm 1. The algorithm is run
+until convergence which is achieved when the label distribution on each node ceases to
+change within some tolerance value. Since Adsorption is memoryless, it scales to tens
+of millions of nodes with dense edges and can be easily parallelized [1].
+Baluja et. al. [1] show that up to the additional dummy label, these two views are
+cont
+. For the experiments
+and pabnd
+equivalent. It remains to specify the values of pinj
+v , pv
+v
+reported in Section 6, we set their value using the following heuristics (adapted from
+Baluja et. al. [1]) which depends on a parameter β which we set to β = 2. For each
+node v we define two quantities: cv and dv and define
+pcont
+∝ cv
+v
+
+;
+
+pinj
+v ∝ dv .
+
+The first quantity cv ∈ [0, 1] is monotonically decreasing with the number of neighbors
+for node v in the graph G. Intuitively, the higher the value of cv , the lower the number
+of neighbors of vertex v and higher the information they contain about the labeling
+of v. The other quantity dv ≥ 0 is monotonically increasing with the entropy (for
+labeled vertices), and in this case we prefer to use the prior-information rather than the
+computed quantities from the neighbors.
+
+Specifically we first compute the entropy of the transition probabilities for each
+node,
+X
+H[v] = −
+Pr [u|v] log Pr [u|v] ,
+u
+
+and then pass it through the following monotonically decreasing function,
+f (x) =
+
+log β
+.
+log(β + ex ))
+
+Note that f (0) = log(β)/ log(β + 1) and that f (x) goes to zero, as x goes to infinity.
+We define,
+cv = f (H[v]) .
+Next we define,
+
+dv =
+
+(1 − cv ) ×
+
+p
+
+H[v]
+0
+
+the vertex v is labeled
+the vertex v is unlabled
+
+abnd
+, we define,
+, pinj
+Finally, to ensure proper normalization of pcont
+v and pv
+v
+
+zv = max(cv + dv , 1) ,
+and
+pcont
+=
+v
+
+cv
+zv
+
+;
+
+pinj
+v =
+
+dv
+zv
+
+;
+
+pabnd
+= 1 − pcont
+− pinj
+v
+v
+v .
+
+Thus, abandonment occurs only when the continuation and injection probabilities are
+low enough. This is most likely to happen at unlabeled nodes with high degree. Once
+the random walk reaches such a node (v), the walk is terminated with probability
+pabnd
+. This, in effect, prevents the Adsorption algorithm from propagating informav
+cont
+for
+and pabnd
+tion through high degree nodes. We note that the probabilities pinj
+v
+v , pv
+node v may be set with heuristics other than the fan-out entropy heuristics shown above
+to suit specific application contexts.
+
+3
+
+Analysis of the Adsorption Algorithm
+
+Our next goal is to find an objective function that the Adsorption algorithm minimizes.
+Our starting point is line 6 of Algorithm 1. We note that when the algorithm converges,
+both sides of the assignment operator equal each other before the assignment takes
+place. Thus when the algorithm terminates, we have for all v ∈ V :
+cont
+Ŷv = pinj
+×
+v × Yv + pv
+
+1 X
+Wuv Ŷu + pabnd
+×r,
+i
+Nv u
+
+where
+Nv =
+
+X
+v0
+
+Wv 0 v .
+
+The last set of equalities is equivalent to,
+
+
+Gv {Ŷu }u∈V = 0 for v ∈ V ,
+
+(3)
+
+where we define,
+
+
+1 X
+cont
+Gv {Ŷu }u∈V = pinj
+×
+Wuv Ŷu + pabnd
+× r − Ŷv .
+v × Yv + pv
+i
+Nv u
+Now,
+algorithm was minimizing some objective function (denoted by
+ if the Adsorption
+
+Q {Ŷu }u∈V ), the termination condition of Eq. (3) was in fact a condition on the
+vector of its partial derivatives where we would identify
+Gv =
+
+∂
+∂ Ŷv
+
+Q.
+
+(4)
+
+Since the functions Gv are linear (and thus has continuous derivatives), necessary conditions for the existence of a function Q such that (4) holds is that the derivatives of Gv
+are symmetric [8], that is,
+∂
+∂
+Gu =
+Gv .
+∂ Ŷv
+∂ Ŷu
+Computing and comparing the derivatives we get,
+
+
+
+
+∂
+Wuv
+Wvu
+∂
+cont
+−
+δ
+−
+δ
+Gv = pcont
+=
+6
+p
+=
+Gu ,
+u,v
+u,v
+v
+u
+Nv
+Nu
+∂ Ŷu
+∂ Ŷv
+which is true since in general Nu 6= Nv and pcont
+6= pcont
+. We conclude:
+v
+u
+Theorem 1. There does not exists a function Q with continuous second partial derivatives such that the Adsorption algorithm convergences when gradient of Q are equal to
+zero.
+In other words, we searched for a (well-behaved) function Q such that its local optimal
+would be the output of the Adsorption algorithm, and showed that this search will always fail. We use this negative results to define a new algorithm, which builds on the
+Adsorption algorithm and is optimizing a function of the unknowns Ŷv for v ∈ V .
+
+4
+
+New Algorithm: Modified Adsorption (MAD)
+
+Our starting point is Sec. 2.2 where we assume to have been given a weighted-graph
+n×(m+1)
+and are seeking for a labeling-matrix
+G = (V, E, W ) and a matrix Y ∈ R+
+n×(m+1)
+Ŷ ∈ R+
+. In this section it is more convenient to decompose the matrices Y and
+Ŷ into their columns, rather than rows. Specifically, we denote by Yl ∈ Rn+ the lth
+column of Y and similarly by Ŷl ∈ Rn+ the lth column of Ŷ. We distinguish the rows
+and columns of the matrices Y and Ŷ using their indices, the columns are indexed with
+the label index l, while the rows are indexed are with a vertex index v (or u).
+
+We build on previous research [3, 17, 11] and construct an objective that reflects
+three requirements as follows. First, for the labeled vertices we like the output of the
+algorithm to be close to the a-priori given labels, that is Yv ≈ Ŷv . Second, for pair
+of vertices that are close according to the input graph, we would like their labeling
+to be close, that is Ŷu ≈ Ŷv if Wuv is large. Third, we want the output to be as
+uninformative as possible, this serves as additional regularization, that is Ŷv ≈ r. We
+now further develop the objective in light of the three requirements.
+We use the Euclidian distance to measure discrepancy between two quantities, and
+start with the first requirement above,
+2
+
+2
+X
+X
+XX
+inj
+Y
+−
+Ŷ
+Y
+−
+Ŷ
+pinj
+=
+p
+vl
+vl
+vl
+vl
+v
+v
+v
+
+l
+
+v
+
+l
+
+=
+
+X
+
+Yl − Ŷl
+
+>
+
+
+
+S Yl − Ŷl ,
+
+l
+
+where we define the diagonal matrix S ∈ Rn×n and Svv = pinj
+v if vertex v is labeled
+and Svv = 0 otherwise. The matrix S captures the intuition that for different vertices
+we enforce the labeling of the algorithm to match the a-priori labeling with different
+extent.
+Next, we modify the similarity weight between vertices to take into account the
+0
+× Wvu .
+difference in degree of various vertices. In particular we define Wvu = pcont
+v
+Thus, a vertex u will not be similar to a vertex v if either the input weights Wvu are
+low or the vertex v has a large-degree (pcont
+is low). We write the second requirement
+v
+as,
+2 X X 0 
+2
+X 0
+X 0 X
+2
+Wvu Ŷv − Ŷu =
+Wvu
+Ŷvl − Ŷul =
+Wvu Ŷvl − Ŷul
+v,u
+
+v,u
+
+l
+
+l
+
+!
+=
+
+XX X
+
+=
+
+X
+
+v
+
+l
+
+0
+
+Wvu
+
+kŶvl k2 +
+
+u
+
+Ŷl> LŶl
+
+v,u
+
+!
+XX X
+l
+
+u
+
+0
+
+kŶul k2 − 2
+
+Wvu
+
+v
+
+XX
+l
+
+0
+
+Wvu Ŷul Ŷvl
+
+u,v
+
+,
+
+l
+
+where,
+0
+
+L = D + D̄ − W − W
+
+0>
+
+,
+
+and D, D̄ are n × n diagonal matrices with
+X 0
+X 0
+Dvv =
+Wuv , D̄vv =
+Wvu .
+u
+
+u
+n×(m+1)
+
+Finally we define the matrix R ∈ R+
+where the vth row of R equals pabnd
+×
+v
+r (we define r in Sec 2.2). In other words the first m columns of R equal zero, and the
+last (m+1th column) equal the elements of pabnd
+. The third requirement above is thus
+v
+written as,
+2 X
+X
+2
+Ŷvl − Rvl =
+Ŷl − Rl .
+vl
+
+l
+
+We combine the three terms above into a single objective (which we would like to
+minimize), giving to each term a different importance using the weights µ1 , µ2 , µ3 .
+
+> 
+
+X 
+2
+T
+(5)
+.
+C(Ŷ) =
+µ1 Yl − Ŷl S Yl − Ŷl + µ2 Ŷl L Ŷl + µ3 Ŷl − Rl
+2
+
+l
+
+The objective in Equation 5 is similar to the Quadratic Cost Criteria [3], with the exception that the matrices S and L have different constructions. We remind the reader
+that Ŷl , Yl , Rl are the lth columns (each of size n × 1) of the matrices Ŷ, Y and R
+respectively.
+4.1
+
+Solving the Optimization Problem
+
+We now develop an algorithm to optimize (5) similar to the quadratic cost criteria [3].
+Differentiating Equation 5 w.r.t. Ŷl we get,
+1 δC(Ŷ)
+= µ1 S(Ŷl − Yl ) + µ2 LŶl + µ3 (Ŷl − Rl )
+2 δ Ŷl
+= (µ1 S + µ2 L + µ3 I)Ŷl − (µ1 SYl + µ3 Rl ) .
+
+(6)
+
+Differentiating once more we get,
+1 δC(Ŷ)
+= µ1 S + µ2 L + µ3 I ,
+2 δ Ŷl δ Ŷl
+and since both S and L are symmetric and positive semidefinite matrices (PSD), we get
+that the Hessian is PSD as well. Hence, the optimal minima is obtained by setting the
+first derivative (i.e. Equation (6)) to 0 as follows,
+(µ1 S + µ2 L + µ3 I) Ŷl = (µ1 SYl + µ3 Rl ) .
+Hence, the new labels (Ŷ) can be obtained by a matrix inversion followed by matrix
+multiplication. However, this can be quite expensive when large matrices are involved.
+A more efficient way to obtain the new label scores is to solve a set of linear equations
+using Jacobi iteration which we now describe.
+4.2
+
+Jacobi Method
+
+Given the following linear system (in x)
+Mx = b
+the Jacobi iterative algorithm defines the approximate solution at the (t+1)th iteration
+given the solution at tth iteration as follows,
+
+
+X
+1
+(t)
+(t+1)
+bi −
+xi
+=
+Mij xj  .
+(7)
+Mii
+j6=i
+
+We apply the iterative algorithm to our problem by substituting x = Ŷl , M = µ1 S +
+µ2 L + µ3 I and b = µ1 SYl + µ3 Rl in (7),
+
+
+X
+1 
+(t+1)
+(t) 
+µ1 (SYl )v + µ3 Rvl −
+Mvu Ŷul
+Ŷvl
+=
+Mvv
+u6=v
+
+(8)
+Let us compute the values of (SYl )i , Mij(j6=i) and Mii . First,
+Mvu(v6=u) = µ1 Svu + µ2 Lvu + µ3 Ivu .
+Note that since S and I are diagonal, we have that Svu = 0 and Ivu = 0 for u 6= v.
+Substituting the value of L we get,
+
+
+0
+0
+Mvu(v6=u) = µ2 Lvu = µ2 Dvu + D̄vu − Wvu − Wuv ,
+and as before the matrices D and D̄ are diagonal and thus Dvu + D̄vu = 0. Finally,
+0
+0
+substituting the values of Wvu and Wuv we get,
+Mvu(v6=u) = −µ2 × (pcont
+× Wvu + pcont
+× Wuv ) .
+v
+u
+
+(9)
+
+We now compute the second quantity,
+(SYl )vu = Svv Yvv +
+
+X
+
+Svt Ytu = pinj
+v × Yvv ,
+
+t6=v
+
+where the second term equals zero since S is diagonal. Finally, the third term,
+Mvv = µ1 Svv + µ2 Lvv + µ3 Ivv
+0
+
+0
+
+= µ1 × pinj
+v + µ2 (Dvv + D̄vv − Wvv − Wvv ) + µ3
+X
+= µ1 × pinj
+(pcont
+Wvu + pcont
+Wuv ) + µ3 .
+v + µ2
+v
+u
+u6=v
+
+Plugging the above equations into (8) and using the fact that the diagonal elements of
+W are zero, we get,
+!
+X
+ (t)
+1
+inj
+cont
+cont
+abnd
+(t+1)
+µ1 pv Yv + µ2
+pv Wvu + pu Wuv Ŷu + µ3 pv r . (10)
+Ŷv
+=
+Mvv
+u
+We call the new algorithm MAD for Modified-Adsorption and it is summarized in Algorithm 2. Note that for graphs G that are invariant to permutations of the vertices, and
+setting µ1 = 2 × µ2 = µ3 = 1, MAD reduces to the Adsorption algorithm.
+4.3
+
+Convergence
+
+A sufficient condition for the iterative process of Equation (7) to converge is that M is
+strictly diagonally dominant [10], that is if,
+X
+|Mvv | >
+|Mvu | for all values of v
+u6=v
+
+Algorithm 2 Modified Adsorption (MAD) Algorithm
+Input:
+- Graph:
+G = (V, E, W )
+- Prior labeling: Yv ∈ Rm+1 for v ∈ V
+cont
+- Probabilities: pinj
+, pabnd
+for v ∈ V
+v , pv
+v
+Output:
+- Label Scores: Ŷv for v ∈ V
+1: Ŷv ← Yv for v ∈ V {Initialization}
+P
+cont
+2: Mvv ← µ1 × pinj
+Wvu + pcont
+Wuv ) + µ3
+v + µ2
+u
+u6=v (pv
+3: repeat X
+` cont
+´
+4:
+Dv ←
+pv Wvu + pcont
+Wuv Ŷu
+u
+u
+
+5:
+for all v ∈ V do`
+´
+abnd
+6:
+Ŷv ← M1vv µ1 × pinj
+×r
+v × Yv + µ2 × Dv + µ3 × pv
+7:
+end for
+8: until convergence
+
+We have,
+|Mvv | −
+
+X
+
+|Mvu | = µ1 ×pinj
+v + µ2 ×
+
+u6=v
+
+X
+
+
+pcont
+×Wvu + pcont
+×Wuv + µ3 −
+v
+u
+
+u6=v
+
+µ2 ×
+
+X
+
+pcont
+×Wvu + pcont
+×Wuv
+v
+u
+
+
+
+u6=v
+
+=
+
+µ1 ×pinj
+v
+
++ µ3
+
+(11)
+
+pinj
+v
+
+≥ 0 for all v and that µ3 is a free parameter in (11). Thus we can
+Note that
+guarantee a strict diagonal dominance (and hence convergence) by setting µ3 > 0.
+
+5
+
+Extensions: Non-Mutually Exclusive Labels
+
+In many learning settings, labels are not mutually exclusive. For example, in hierarchical classification, labels are organized in a tree. In this section, we extend the MAD
+algorithm to handle dependence among labels. This can be easily done using our new
+formulation which is based on objective optimization. Specifically, we shall add additional terms to the objective for each pair of dependent labels. Let C be a m × m matrix
+where m is the number of labels (excluding the dummy label) as before. Each entry,
+0
+Cll0 , of this matrix C represents the dependence or similarity among the labels l and l .
+By encoding dependence in this pairwise fashion, we can capture dependencies among
+labels represented as arbitrary graphs. The extended objective is shown in Equation 12.
+
+C(Ŷ) =
+
+> 
+
+X 
+µ1 Yl − Ŷl S Yl − Ŷl + µ2 ŶlT L Ŷl + µ3 Ŷl − Rl
+l
+
+2
+2
+
+
++µ4
+
+XX
+i
+
+l,l
+
+0
+
+Cll0 (Ŷil − Ŷil0 )2 
+
+(12)
+
+The last term in Equation 12 penalizes the algorithm if similar labels (as determined by
+the matrix C) are assigned different scores, with severity of the penalty controlled by
+µ4 . Now, analyzing the objective in Equation 12 in the manner outlined in Section 4,
+we arrive at the update rule shown in Equation 13.
+
+(t+1)
+
+Ŷvl
+
+=
+
+1
+Mlvv
+
+µ1 pinj
+v Yvl + µ2
+
+X
+
+ (t)
+pcont
+Wvu + pcont
+Wuv Ŷul +
+v
+u
+
+u
+
+
+µ3 pabnd
+rl + µ4
+v
+
+X
+l
+
+(t)
+
+Cll0 Ŷvl0 
+
+(13)
+
+0
+
+where,
+X
+
+Mlvv = µ1 × pinj
+v + µ2 ×
+
+u6=v
+
+(pcont
+Wvu + pcont
+Wuv ) + µ3 + µ4
+v
+u
+
+X
+
+Cll0
+
+l0
+
+Replacing Line 6 in MAD (Algorithm 2) with Equation 13, we end up with a new
+algorithm: Modified Adsorption for Dependent Labels (MADDL). In Section 6.4, we
+shall use MADDL to obtain smooth ranking for sentiment classification.
+
+6
+
+Experimental Results
+
+We compare MAD with various state-of-the-art learning algorithms on two tasks, text
+classification (Sec. 6.1) and sentiment analysis (Sec. 6.2), and demonstrate its effectiveness. In Sec. 6.3, we also provide experimental evidence showing that MAD is
+quite insensitive to wide variation of values of its hyper-parameters. In Sec. 6.4, we
+present evidence showing how MADDL can be used to obtain smooth ranking for sentiment prediction, a particular instantiation of classification with non-mutually exclusive
+labels. For the experiments reported in this section involving Adsorption, MAD and
+MADDL, the a-priori label matrix Y was column-normalized so that all labels have
+equal overall injection score. Also, the dummy label was ignored during evaluation as
+its main role is to add regularization during learning phase only.
+6.1
+
+Text Classification
+
+World Wide Knowledge Base (WebKB) is a text classification dataset widely used for
+evaluating transductive learning algorithms. Most recently, the dataset was used by
+Subramanya and Bilmes [11], who kindly shared their preprocessed complete WebKB
+graph with us. There are a total of 4, 204 vertices in the graph, with the nodes labeled
+with one of four categories: course, faculty, project, student. A K-NN graph is created
+from this complete graph by retaining only top K neighbors of each node, where the
+value of K is treated as a hyper-parameter.
+We follow the experimental protocol in [11]. The dataset was randomly partitioned
+into four sets. A transduction set was generated by first selecting one of the four splits at
+random and then sampling nl documents from it; the remaining three sets are used as the
+
+Class
+course
+faculty
+project
+student
+average
+
+SVM
+46.5
+14.5
+15.8
+15.0
+23.0
+
+TSVM
+43.9
+31.2
+17.2
+24.5
+29.2
+
+SGT
+29.9
+42.9
+17.5
+56.6
+36.8
+
+LP
+45.0
+40.3
+27.8
+51.8
+41.2
+
+AM Adsorption MAD
+67.6
+61.1
+67.5
+42.5
+52.8
+42.2
+42.3
+52.6
+45.5
+55.0
+39.8
+59.6
+51.9
+51.6
+53.7
+
+Table 1. PRBEP for the WebKB data set with nl = 48 training and 3148 testing instances. All
+results are averages over 20 randomly generated transduction sets. The last row is the macroaverage over all the classes. MAD is the proposed approach. Results for SVM, TSVM, SGT, LP
+and AM are reproduced from Table 2 of [11].
+
+test set for evaluation. This process was repeated 21 times to generate as many trainingtest splits. The first split was used to tune the hyper-parameters, with search over the
+following: K ∈ {10, 50, 100, 500, 1000, 2000, 4204}, µ2 , µ3 ∈ {1e−8, 1e−4, 1e−2, 1,
+10, 1e2, 1e3}. The value of µ1 was set to 1 for this experiment. Both for Adsorption
+and MAD, the optimal value of K was 1, 000. Furthermore, the optimal value for
+the other parameters were found to be µ2 = µ3 = 1. As in previous work [11], we
+use Precision-Recall Break Even Point (PRBEP) [9] as the evaluation metric. Same
+evaluation measure, dataset and the same experimental protocol makes the results reported here directly comparable to those reported previously [11]. For easier readability, the results from Table 2 of Subramanya and Bilmes [11] are cited in Table 1 of this
+paper, comparing performance of Adsorption based methods (Adsorption and MAD)
+to many previously proposed approaches: SVM [6], Transductive-SVM [6], Spectral
+Graph Transduction (SGT) [7], Label Propagation (LP) [16] and Alternating Minimization (AM) [11]. The first four rows in Table 1 shows PRBEP for individual categories,
+with the last line showing the macro-averaged PRBEP across all categories. The MAD
+algorithm achieves the best performance overall (for nl = 48).
+Performance comparison of MAD and Adsorption for increasing nl are shown in
+Figure 1. Comparing these results against Fig. 2 in Subramanya and Bilmes [11], it
+seems that MAD outperforms all other methods compared (except AM [11]) for all
+values of nl . MAD performs better than AM for nl = 48, but achieves second best
+solution for the other three values of nl . We are currently investigating why MAD is
+best for settings with fewer labeled examples.
+6.2 Sentiment Analysis
+The goal of sentiment analysis is to automatically assign polarity scores to text collections, with a high score reflecting positive sentiment (user likes) and a low score reflecting negative sentiment (user dislikes). In this section, we report results on sentiment
+classification in the transductive setting. From Section 6.1 and [11], we observe that
+Label Propagation (LP) [16] is one of the best performing L2-norm based transductive
+learning algorithm. Hence, we compare the performance of MAD against Adsorption
+and LP.
+For the experiments in this section, we use a set of 4, 768 user reviews from the
+electronics domain [4]. Each review is assigned one of the four scores: 1 (worst), 2,
+
+Fig. 1. PRBEP (macro-averaged) for the WebKB dataset with 3148 testing instances. All results
+are averages over 20 randomly generated transduction sets.
+
+3, 4 (best). We create a K-NN graph from these reviews by using cosine similarity
+as the measure of similarity between reviews. We created 5 training-test splits from
+this data using the process described in Section 6.1. One split was used to tune the
+hyper-parameters while the rest were used for training and evaluation. Hyper-parameter
+search was carried over the following ranges: K ∈ {10, 100, 500}, µ1 ∈ {1, 100},
+µ2 ∈ {1e−4, 1, 10}, µ3 ∈ {1e−8, 1, 100, 1e3}. Precision is used as the evaluation
+metric. Comparison of different algorithms for varying number of labeled instances are
+shown in Figure 2. From this, we note that MAD and Adsorption outperform LP, while
+Adsorption and MAD are competitive
+
+6.3
+
+Parameter Sensitivity
+
+We evaluated the sensitivity of MAD to variations of its µ2 and µ3 hyper-parameters,
+with all other hyper-parameters fixed. We used a 2000-NN graph constructed from the
+WebKB dataset and a 500-NN graph constructed from the Sentiment dataset. In both
+cases, 100 nodes were labeled. We tried three values each for µ2 and µ3 , ranging in at
+least 3 order of magnitude. For the WebKB, the PRBEP varied between 43.1−49.9 and
+for the sentiment data, the precision varied in the range 31.4−36.4 with µ2 ≤ µ3 while
+precision dropped to 25 with µ2 > µ3 . This underscores the need for regularization in
+these models, which is enforced with high µ3 . We note that in both cases the algorithm
+is less sensitive to the value of µ2 than the value of µ3 . In general, we have found that
+setting µ3 to one or two order magnitude more than µ2 is a reasonable choice. We have
+also found that the MAD algorithm is quite insensitive to variations in µ1 . For example
+on the sentiment dataset, we tried two values for µ1 ranging two order of magnitude,
+with other hyper-parameters fixed. In this case, precision varied in the range 36.2 - 36.3.
+
+Fig. 2. Precision for the Sentiment Analysis dataset with 3568 testing instances. All results are
+averages over 4 randomly generated transduction sets.
+
+µ4
+0
+1 10 100 1e3 1e4
+Prediction Loss (L1) at rank 1 0.93 0.93 0.92 0.90 0.90 0.90
+Prediction Loss (L1) at rank 2 1.21 1.20 1.12 0.96 0.97 0.97
+Table 2. Average prediction loss at ranks 1 & 2 (for various values of µ4 ) for sentiment prediction.
+All results are averaged over 4 runs. See Section 6.4 for details.
+
+6.4
+
+Smooth Ranking for Sentiment Analysis
+
+We revisit the sentiment prediction problem in Section 6.2, but with the additional requirement that ranking of the labels (1, 2, 3, 4) generated by the algorithm should be
+smooth i.e. we prefer the ranking 1 > 2 > 3 > 4 over the ranking 1 > 4 > 3 > 2, where
+3 > 2 means that the algorithm ranks label 3 higher than label 2. The ranking 1 > 2 >
+3 > 4 is smoother as it doesn’t involve rough transition 1 > 4 which is present in 1 > 4
+> 3 > 2. We use the framework of stating requirements as an objective to be optimized.
+We use the MADDL algorithm of Sec. 5 initializing the matrix C as follows (assuming
+that labels 1 and 2 are related, while labels 3 and 4 are related):
+C12 = C21 = 1 ,
+
+C34 = C43 = 1
+
+with all other entries in matrix C set to 0. Such constraints (along with appropriate µ4
+in Equation (12)) will force the algorithm to assign similar scores to dependent labels,
+thereby assigning them adjacent ranks in the final output. MAD and MADDL were
+then used to predict ranked labels for vertices on a 1000-NN graph constructed from
+the sentiment data used in Sec. 6.2, with 100 randomly selected nodes labeled. For this
+experiment we set µ1 = µ2 = 1, µ3 = 100. The L1-loss between the gold label and
+labels predicted at ranks r = 1, 2 for increasing values of µ4 are given in Table 2. Note
+that, MADDL with µ4 = 0 corresponds to MAD. From Table 2 we observe that with
+
+Count of Top Predicted Pair in MAD Output
+
+Count of Top Predicted Pair in MADDL Output
+
+4000
+
+10000
+
+2000
+
+5000
+
+0
+
+0
+1
+
+1
+
+2
+
+2
+3
+4
+Label 2
+
+1
+
+2
+
+3
+
+4
+
+Label 1
+
+Fig. 3. Plot of counts of top predicted
+label pairs (order ignored) in MAD’s
+predictions with µ1 = µ2 = 1, µ3 =
+100.
+
+3
+4
+Label 2
+
+1
+
+2
+
+3
+
+4
+
+Label 1
+
+Fig. 4. Plot of counts of top label pairs
+(order ignored) in MADDL’s predictions (Section 5), with µ1 = µ2 = 1,
+µ3 = 100, µ4 = 1e3.
+
+increasing µ4 , MADDL is ranking at r = 2 a label which is related (as per C) to the
+top ranked label at r = 1, but at the same time maintain the quality of prediction at
+r = 1 (first row of Table 2), thereby ensuring a smoother ranking. From Table 2, we
+also observe that MADDL is insensitive to variations of µ4 beyond a certain range. This
+suggests that µ4 may be set to a (high) value and that tuning it may not be necessary.
+Another view of the same phenomenon is shown in Fig. 3 and Fig. 4. In these
+figures, we plot the counts of top predicted label pair (order of prediction is ignored
+for better readability) generated by the MAD and MADDL algorithms. By comparing
+these two figures we observe that label pairs (e.g. (2,1) and (4,3)) favored by C (above)
+are more frequent in MADDL’s predictions than in MAD’s. At the same time, nonsmooth predictions (e.g. (4, 1)) are virtually absent in MADDL’s predictions while they
+are quite frequent in MAD’s. These clearly demonstrate MADDL’s ability to generate
+smooth predictions in a principled way, and more generally the ability to handle data
+with non-mutually exclusive or dependent labels.
+
+7
+
+Related Work
+
+LP [16] is one of the first graph based semi-supervised algorithms. Even though there
+are several similarities between LP and MAD, there are important differences: (1) LP
+doesn’t allow the labels on seeded nodes to change (while MAD does). As was pointed
+out previously [3], this can be problematic in case of noisy seeds. (2) There is no way for
+LP to express label uncertainty about a node. MAD can accomplish this by assigning
+high score to the dummy label. More recently, a KL minimization based algorithm
+was presented in [11]. Further investigation is necessary to determine the merits of
+each approach. For a general introduction to the area of graph-based semi-supervised
+learning, the reader is referred to a survey by Zhu [15].
+
+8
+
+Conclusion
+
+In this paper we have analyzed the Adsorption algorithm [1] and proposed a new graph
+based semi-supervised learning algorithm, MAD. We have developed efficient (iterative) solution to solve our convex optimization based learning problem. We have also
+listed the conditions under which the algorithm is guaranteed to converge. Transition
+to an optimization based learning algorithm allows us to easily extend the algorithm
+to handle data with non-mutually exclusive labels, resulting in the MADDL algorithm.
+We have provided experimental evidence demonstrating effectiveness of our proposed
+methods. As part of future work, we plan to evaluate the proposed methods further
+and apply the MADDL method in problems with dependent labels (e.g. Information
+Extraction).
+
+Acknowledgment
+This research is partially supported by NSF grant #IIS-0513778. The authors would like to thank
+F. Pereira and D. Sivakumar for useful discussions.
+
+References
+1. S. Baluja, R. Seth, D. Sivakumar, Y. Jing, J. Yagnik, S. Kumar, D. Ravichandran, and M. Aly.
+Video suggestion and discovery for youtube: taking random walks through the view graph.
+In WWW, 2008.
+2. M. Belkin, P. Niyogi, and V. Sindhwani. Manifold regularization: A geometric framework
+for learning from labeled and unlabeled examples. JMLR, 7:2399–2434, 2006.
+3. Y. Bengio, O. Delalleau, and N. Roux. Semi-Supervised Learning, chapter Label Propogation and Quadratic Criterion, 2007.
+4. J. Blitzer, M. Dredze, and F. Pereira. Biographies, bollywood, boom-boxes and blenders:
+Domain adaptation for sentiment classification. In ACL, 2007.
+5. P. Indyk and J. Matousek. Low-distortion embeddings of finite metric spaces. Handbook of
+Discrete and Computational Geometry, 2004.
+6. T. Joachims. Transductive inference for text classification using support vector machines. In
+ICML, 1999.
+7. T. Joachims. Transductive learning via spectral graph partitioning. In ICML, 2003.
+8. V. J. Katz. The history of stokes’ theorem. Mathematics Magazine, 52(3):146–156, 1979.
+9. V. Raghavan, P. Bollmann, and G. Jung. A critical investigation of recall and precision as
+measures of retrieval system performance. ACM TOIS, 7(3):205–229, 1989.
+10. Y. Saad. Iterative Methods for Sparse Linear Systems. Society for Industrial Math., 2003.
+11. A. Subramanya and J. Bilmes. Soft-Supervised Learning for Text Classification. In EMNLP,
+2008.
+12. M. Szummer and T. Jaakkola. Partially labeled classification with markov random walks.
+NIPS, 2002.
+13. P. P. Talukdar, J. Reisinger, M. Pasca, D. Ravichandran, R. Bhagat, and F. Pereira. Weakly
+supervised acquisition of labeled class instances using graph random walks. In EMNLP,
+2008.
+14. J. Wang, T. Jebara, and S. Chang. Graph transduction via alternating minimization. In ICML,
+2008.
+15. X. Zhu. Semi-supervised learning literature survey. 2005.
+16. X. Zhu and Z. Ghahramani. Learning from labeled and unlabeled data with label propagation. Technical report, CMU CALD tech report, 2002.
+17. X. Zhu, Z. Ghahramani, and J. Lafferty. Semi-supervised learning using gaussian fields and
+harmonic functions. ICML, 2003.
+
+
